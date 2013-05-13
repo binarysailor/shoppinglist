@@ -18,6 +18,9 @@
 	<string name="catalog.edit.deleteCategory.confirmation.title">Usuwanie kategorii</string>
 	<string name="catalog.edit.deleteCategory.confirmation.message">Czy na pewno chcesz usunąć kategorię %s i wszystkie przypisane do niej produkty z katalogu i ze wszystkich list zakupów?</string>
 	<string name="catalog.edit.deleteCategory.confirmation.toast">Kategoria %s została usunięta</string>
+	<string name="catalog.edit.deleteProduct.confirmation.title">Usuwanie produktu</string>
+	<string name="catalog.edit.deleteProduct.confirmation.message">Czy na pewno chcesz usunąć produkt %s z katalogu i ze wszystkich list zakupów?</string>
+	<string name="catalog.edit.deleteProduct.confirmation.toast">Produkt %s został usunięty</string>	
 	<string name="category_edit_category_name">Nazwa</string>
 	<string name="category_edit_category_name_hint">Wprowadź nazwę kategorii</string>
 	<string name="product_edit_product_name">Nazwa produktu</string>

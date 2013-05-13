@@ -183,4 +183,8 @@ public class CatalogDAO {
 	private String generateSortOrder() {
 		return "z" + System.currentTimeMillis();
 	}
+
+	public void deleteProduct(int id) {
+		// TODO Auto-generated method stub
+	}
 }

@@ -6,13 +6,11 @@ import net.binarysailor.shopping.catalog.model.Category;
 import net.binarysailor.shopping.catalog.model.Product;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 public class CatalogEditActivity extends Activity {
 
@@ -40,28 +38,11 @@ public class CatalogEditActivity extends Activity {
 	}
 
 	public void confirmDeleteCategory(View deleteButton) {
-		final Category category = (Category) deleteButton.getTag();
+		Category category = (Category) deleteButton.getTag();
 		AlertDialog dialog = new AlertDialog.Builder(this).create();
 		dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						new CatalogDAO(CatalogEditActivity.this).deleteCategory(category.getId());
-						refreshProductTree();
-						Toast.makeText(
-								CatalogEditActivity.this,
-								String.format(getString(R.string.catalog_edit_deleteCategory_confirmation_toast),
-										category.getName()), Toast.LENGTH_SHORT).show();
-					}
-
-				});
-		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.no),
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
-					}
-				});
+				new CategoryDeleteConfirmClickListener(this, category));
+		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.no), new DeleteCancelClickListener());
 		dialog.setTitle(R.string.catalog_edit_deleteCategory_confirmation_title);
 		dialog.setMessage(getString(R.string.catalog_edit_deleteCategory_confirmation_message, category.getName()));
 		dialog.show();
@@ -84,9 +65,16 @@ public class CatalogEditActivity extends Activity {
 	}
 
 	public void confirmDeleteProduct(View deleteButton) {
-		// TODO
+		Product product = (Product) deleteButton.getTag();
+		AlertDialog dialog = new AlertDialog.Builder(this).create();
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
+				new ProductDeleteConfirmClickListener(this, product));
+		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.no), new DeleteCancelClickListener());
+		dialog.setTitle(R.string.catalog_edit_deleteProduct_confirmation_title);
+		dialog.setMessage(getString(R.string.catalog_edit_deleteProduct_confirmation_message, product.getName()));
+		dialog.show();
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
@@ -119,14 +107,15 @@ public class CatalogEditActivity extends Activity {
 		}
 	}
 
+	void refreshProductTree() {
+		ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
+		((BaseAdapter) categorizedProducts.getAdapter()).notifyDataSetChanged();
+	}
+
 	private void drawProductTree() {
 		ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
 		CatalogEditViewFactory productViewFactory = new CatalogEditViewFactory();
 		categorizedProducts.setAdapter(new CatalogViewAdapter(this, productViewFactory));
 	}
 
-	private void refreshProductTree() {
-		ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
-		((BaseAdapter) categorizedProducts.getAdapter()).notifyDataSetChanged();
-	}
 }

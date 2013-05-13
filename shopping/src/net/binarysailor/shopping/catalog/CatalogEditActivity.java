@@ -83,6 +83,10 @@ public class CatalogEditActivity extends Activity {
 		startActivityForResult(i, REQ_CODE_EDIT_PRODUCT);
 	}
 
+	public void confirmDeleteProduct(View deleteButton) {
+		// TODO
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {

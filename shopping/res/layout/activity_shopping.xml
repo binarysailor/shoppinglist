@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context=".ShoppingActivity" >
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+        
+        <TextView
+            style="@style/ActiveLink"
+            android:id="@+id/textViewEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_activity_shopping"
+             />
+        
+        <ImageView 
+            android:src="@android:drawable/ic_media_play" 
+            android:contentDescription="" 
+            android:layout_width="wrap_content" 
+            android:layout_height="fill_parent" />
+
+        <TextView
+            android:id="@+id/textViewGoShopping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_activity_flat_shopping"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:clickable="true"
+            android:onClick="showFlatView" />
+        
+        
+        <!-- 
+        <Button
+            android:id="@+id/flatView"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/shopping.button.flatView"
+            android:onClick="showFlatView"
+            android:drawableLeft="@android:drawable/ic_menu_agenda" />
+             -->
+    </LinearLayout>
+
+    <ExpandableListView
+        android:id="@+id/productTree"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:clickable="true"  
+        >
+    </ExpandableListView>
+    
+</LinearLayout>

@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingTop="30dp"
+    tools:context=".MainActivity" >
+ 
+    <Button 
+ 		android:id="@+id/goToShoppingButton"
+ 		android:onClick="goToShopping"
+        android:drawableTop="@drawable/cart"
+        android:text="@string/welcome.shopping" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content" 
+        android:contentDescription="@string/welcome.shopping"
+        android:layout_gravity="center"
+        android:background="@null"  />
+
+	<Button 
+ 		android:id="@+id/goToCatalogButton"
+ 		android:onClick="goToCatalog"
+        android:drawableTop="@drawable/directory"
+        android:text="@string/welcome.catalog" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content" 
+        android:contentDescription="@string/welcome.catalog"
+        android:layout_gravity="center"
+        android:background="@null"  />
+</LinearLayout>

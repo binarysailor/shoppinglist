@@ -1,6 +1,7 @@
 package net.binarysailor.shopping.catalog.model;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,6 +44,16 @@ public class Category implements Serializable {
 	public void addProduct(Product p) {
 		products.add(p);
 		p.setCategory(this);
+	}
+
+	public void removeProduct(Product product) {
+		for (Iterator<Product> i = products.iterator(); i.hasNext();) {
+			Product p = i.next();
+			if (p == product) {
+				i.remove();
+				p.setCategory(null);
+			}
+		}
 	}
 
 	public boolean isNew() {

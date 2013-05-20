@@ -15,5 +15,6 @@ public class CatalogContract {
 		static final String NAME = "name";
 		static final String CATEGORY_ID = "category_id";
 		static final String SORT_ORDER = "sort_order";
+		static final String ACTIVE = "active";
 	}
 }

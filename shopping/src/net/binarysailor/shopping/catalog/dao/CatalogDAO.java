@@ -34,6 +34,27 @@ public class CatalogDAO {
 		return CatalogDAO.categories;
 	}
 
+	public void createCategory(final Category editedCategory) {
+		assertCategoriesLoaded();
+		int categoryId = (Integer) DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
+			@Override
+			public Object execute(SQLiteDatabase db) {
+				ContentValues values = new ContentValues();
+				values.put(CatalogContract.Category.NAME, editedCategory.getName());
+				values.put(CatalogContract.Category.SORT_ORDER, generateSortOrder());
+				values.put(CatalogContract.Category.ACTIVE, true);
+				long rowid = db.insert(CatalogContract.Category.TABLE_NAME, null, values);
+				Cursor idCursor = db.rawQuery("select " + CatalogContract.Category.ID + " from "
+						+ CatalogContract.Category.TABLE_NAME + " where ROWID = ?",
+						new String[] { String.valueOf(rowid) });
+				idCursor.moveToFirst();
+				return idCursor.getInt(0);
+			}
+		});
+		editedCategory.setId(categoryId);
+		CatalogDAO.categories.add(editedCategory);
+	}
+
 	public Category getCategoryById(int id) {
 		for (Category c : getCategories()) {
 			if (c.getId() == id) {
@@ -41,6 +62,25 @@ public class CatalogDAO {
 			}
 		}
 		return null;
+	}
+
+	public void updateCategory(final Category editedCategory) {
+		for (Category c : getCategories()) {
+			if (c.getId() == editedCategory.getId()) {
+				DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
+					@Override
+					public Object execute(SQLiteDatabase db) {
+						ContentValues values = new ContentValues();
+						values.put(CatalogContract.Category.NAME, editedCategory.getName());
+						db.update(CatalogContract.Category.TABLE_NAME, values, CatalogContract.Category.ID + " = ?",
+								new String[] { String.valueOf(editedCategory.getId()) });
+						return null;
+					}
+				});
+				c.setName(editedCategory.getName());
+				break;
+			}
+		}
 	}
 
 	public void deleteCategory(final int id) {
@@ -64,22 +104,63 @@ public class CatalogDAO {
 		}
 	}
 
-	public void updateCategory(final Category editedCategory) {
-		for (Category c : getCategories()) {
-			if (c.getId() == editedCategory.getId()) {
-				DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-					@Override
-					public Object execute(SQLiteDatabase db) {
-						ContentValues values = new ContentValues();
-						values.put(CatalogContract.Category.NAME, editedCategory.getName());
-						db.update(CatalogContract.Category.TABLE_NAME, values, CatalogContract.Category.ID + " = ?",
-								new String[] { String.valueOf(editedCategory.getId()) });
-						return null;
-					}
-				});
-				c.setName(editedCategory.getName());
-				break;
+	public void createProduct(final Product editedProduct) {
+		int productId = (Integer) DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
+			@Override
+			public Object execute(SQLiteDatabase db) {
+				ContentValues values = new ContentValues();
+				values.put(CatalogContract.Product.CATEGORY_ID, editedProduct.getCategory().getId());
+				values.put(CatalogContract.Product.NAME, editedProduct.getName());
+				values.put(CatalogContract.Product.SORT_ORDER, generateSortOrder());
+				values.put(CatalogContract.Product.ACTIVE, true);
+				long rowid = db.insert(CatalogContract.Product.TABLE_NAME, null, values);
+				return (int) rowid;
 			}
+		});
+		editedProduct.setId(productId);
+		Category category = getCategoryById(editedProduct.getCategory().getId());
+		category.addProduct(editedProduct);
+		CatalogDAO.productsById.put(productId, editedProduct);
+	}
+
+	public Product getProductById(int id) {
+		assertCategoriesLoaded();
+		return CatalogDAO.productsById.get(id);
+	}
+
+	public void updateProduct(final Product editedProduct) {
+		Product product = CatalogDAO.productsById.get(editedProduct.getId());
+		if (product != null) {
+			DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
+				@Override
+				public Object execute(SQLiteDatabase db) {
+					ContentValues values = new ContentValues();
+					values.put(CatalogContract.Product.NAME, editedProduct.getName());
+					db.update(CatalogContract.Product.TABLE_NAME, values, CatalogContract.Product.ID + " = ?",
+							new String[] { String.valueOf(editedProduct.getId()) });
+					return null;
+				}
+			});
+			product.setName(editedProduct.getName());
+		}
+	}
+
+	public void deleteProduct(final int id) {
+		Product product = getProductById(id);
+		if (product != null) {
+			product.getCategory().removeProduct(product);
+			CatalogDAO.productsById.remove(id);
+			DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
+				@Override
+				public Object execute(SQLiteDatabase db) {
+					String[] queryArgs = new String[] { String.valueOf(id) };
+					ContentValues values = new ContentValues();
+					values.put("active", false);
+					db.update(CatalogContract.Product.TABLE_NAME, values, CatalogContract.Product.ID + " = ?",
+							queryArgs);
+					return null;
+				}
+			});
 		}
 	}
 
@@ -104,8 +185,8 @@ public class CatalogDAO {
 		}
 		cursor.close();
 		CatalogDAO.productsById = new SparseArray<Product>();
-		cursor = db.query(CatalogContract.Product.TABLE_NAME, PRODUCT_COLUMNS, null, null, null, null,
-				CatalogContract.Product.CATEGORY_ID + "," + CatalogContract.Product.SORT_ORDER);
+		cursor = db.query(CatalogContract.Product.TABLE_NAME, PRODUCT_COLUMNS, CatalogContract.Product.ACTIVE + " = 1",
+				null, null, null, CatalogContract.Product.CATEGORY_ID + "," + CatalogContract.Product.SORT_ORDER);
 		dataAvailable = cursor.moveToFirst();
 		while (dataAvailable) {
 			Product product = EntityFactory.createProduct(cursor);
@@ -121,70 +202,7 @@ public class CatalogDAO {
 		CatalogDAO.categories = categories;
 	}
 
-	public void createCategory(final Category editedCategory) {
-		assertCategoriesLoaded();
-		int categoryId = (Integer) DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-			@Override
-			public Object execute(SQLiteDatabase db) {
-				ContentValues values = new ContentValues();
-				values.put(CatalogContract.Category.NAME, editedCategory.getName());
-				values.put(CatalogContract.Category.SORT_ORDER, generateSortOrder());
-				values.put(CatalogContract.Category.ACTIVE, true);
-				long rowid = db.insert(CatalogContract.Category.TABLE_NAME, null, values);
-				Cursor idCursor = db.rawQuery("select " + CatalogContract.Category.ID + " from "
-						+ CatalogContract.Category.TABLE_NAME + " where ROWID = ?",
-						new String[] { String.valueOf(rowid) });
-				idCursor.moveToFirst();
-				return idCursor.getInt(0);
-			}
-		});
-		editedCategory.setId(categoryId);
-		CatalogDAO.categories.add(editedCategory);
-	}
-
-	public void createProduct(final Product editedProduct) {
-		int productId = (Integer) DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-			@Override
-			public Object execute(SQLiteDatabase db) {
-				ContentValues values = new ContentValues();
-				values.put(CatalogContract.Product.CATEGORY_ID, editedProduct.getCategory().getId());
-				values.put(CatalogContract.Product.NAME, editedProduct.getName());
-				values.put(CatalogContract.Product.SORT_ORDER, generateSortOrder());
-				long rowid = db.insert(CatalogContract.Product.TABLE_NAME, null, values);
-				Cursor idCursor = db.rawQuery("select " + CatalogContract.Product.ID + " from "
-						+ CatalogContract.Product.TABLE_NAME + " where ROWID = ?",
-						new String[] { String.valueOf(rowid) });
-				idCursor.moveToFirst();
-				return idCursor.getInt(0);
-			}
-		});
-		editedProduct.setId(productId);
-		Category category = getCategoryById(editedProduct.getCategory().getId());
-		category.addProduct(editedProduct);
-	}
-
-	public void updateProduct(final Product editedProduct) {
-		Product product = CatalogDAO.productsById.get(editedProduct.getId());
-		if (product != null) {
-			DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-				@Override
-				public Object execute(SQLiteDatabase db) {
-					ContentValues values = new ContentValues();
-					values.put(CatalogContract.Product.NAME, editedProduct.getName());
-					db.update(CatalogContract.Product.TABLE_NAME, values, CatalogContract.Product.ID + " = ?",
-							new String[] { String.valueOf(editedProduct.getId()) });
-					return null;
-				}
-			});
-			product.setName(editedProduct.getName());
-		}
-	}
-
 	private String generateSortOrder() {
 		return "z" + System.currentTimeMillis();
-	}
-
-	public void deleteProduct(int id) {
-		// TODO Auto-generated method stub
 	}
 }

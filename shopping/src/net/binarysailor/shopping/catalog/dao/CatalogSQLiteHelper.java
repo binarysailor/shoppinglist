@@ -28,7 +28,7 @@ public class CatalogSQLiteHelper implements ModuleSQLiteHelper {
 		db.execSQL("CREATE TABLE category (" + "id INTEGER PRIMARY KEY AUTOINCREMENT, " + "name TEXT, "
 				+ "sort_order TEXT, active BOOLEAN)");
 		db.execSQL("CREATE TABLE product (" + "id INTEGER PRIMARY KEY AUTOINCREMENT, " + "name TEXT, "
-				+ "category_id INTEGER REFERENCES category(id) ON DELETE SET NULL," + "sort_order TEXT)");
+				+ "category_id INTEGER REFERENCES category(id) ON DELETE SET NULL, sort_order TEXT, active BOOLEAN)");
 		Map<Category, List<Product>> categories2Products = getInitialCategories2Products();
 		for (Category category : categories2Products.keySet()) {
 			long categoryId = insertCategory(db, category);

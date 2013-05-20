@@ -9,7 +9,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.BaseAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 public class CatalogEditActivity extends Activity {
@@ -109,7 +109,15 @@ public class CatalogEditActivity extends Activity {
 
 	void refreshProductTree() {
 		ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
-		((BaseAdapter) categorizedProducts.getAdapter()).notifyDataSetChanged();
+		BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) categorizedProducts.getExpandableListAdapter();
+		adapter.notifyDataSetChanged();
+		int size = ((BaseExpandableListAdapter) adapter).getGroupCount();
+		for (int i = 0; i < size; i++) {
+			if (categorizedProducts.isGroupExpanded(i)) {
+				categorizedProducts.collapseGroup(i);
+				categorizedProducts.expandGroup(i);
+			}
+		}
 	}
 
 	private void drawProductTree() {

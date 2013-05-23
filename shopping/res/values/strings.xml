@@ -25,4 +25,6 @@
 	<string name="category_edit_category_name_hint">Wprowadź nazwę kategorii</string>
 	<string name="product_edit_product_name">Nazwa produktu</string>
 	<string name="product_edit_product_name_hint">Wprowadź nazwę produktu</string>
+	<string name="product_search_hint">Szukaj produktu</string>
+	<string name="clear_filter">Wyczyść</string>
 </resources>

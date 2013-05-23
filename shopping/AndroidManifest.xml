@@ -24,7 +24,17 @@
         <activity
             android:name="net.binarysailor.shopping.shoppinglist.ShoppingListEditActivity"
             android:label="@string/title_activity_shopping" >
+            <meta-data android:name="android.app.default_searchable" android:value=".shoppinglist.ProductSearchActivity" />
         </activity>
+        <activity
+            android:name="net.binarysailor.shopping.shoppinglist.ProductSearchActivity"
+            android:label="@string/title_activity_shopping" 
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
+        </activity>        
         <activity
             android:name="net.binarysailor.shopping.shoppinglist.FlatShoppingListActivity"
             android:label="@string/title_activity_flat_shopping" >

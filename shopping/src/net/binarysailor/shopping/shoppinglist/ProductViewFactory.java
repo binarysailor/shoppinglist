@@ -37,8 +37,10 @@ class ShoppingListEditProductViewFactory implements CatalogViewFactory {
 	public View getCategoryView(Category category, Context context, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(android.R.layout.simple_expandable_list_item_1, parent, false);
+		view.setBackgroundColor(context.getResources().getColor(android.R.color.darker_gray));
 		TextView tv = (TextView) view.findViewById(android.R.id.text1);
 		tv.setText(category.getName());
+		tv.setTextColor(context.getResources().getColor(android.R.color.white));
 		return view;
 	}
 

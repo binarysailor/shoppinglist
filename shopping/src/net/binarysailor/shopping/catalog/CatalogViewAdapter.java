@@ -1,5 +1,6 @@
 package net.binarysailor.shopping.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.binarysailor.shopping.catalog.dao.CatalogDAO;
@@ -20,12 +21,16 @@ public class CatalogViewAdapter extends BaseExpandableListAdapter {
 
 	Context context;
 	List<Category> categories;
+	List<FilteredCategory> filteredCategories;
 	CatalogViewFactory productViewFactory;
+	String filterText;
 
 	public CatalogViewAdapter(Context context, CatalogViewFactory productViewFactory) {
 		this.context = context;
 		this.categories = new CatalogDAO(context).getCategories();
 		this.productViewFactory = productViewFactory;
+		this.filteredCategories = new ArrayList<FilteredCategory>(categories.size());
+		filterCategories();
 	}
 
 	@Override
@@ -47,27 +52,27 @@ public class CatalogViewAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		return categories.get(groupPosition).getProducts().size();
+		return filteredCategories.get(groupPosition).getProducts().size();
 	}
 
 	@Override
 	public Object getGroup(int groupPosition) {
-		return categories.get(groupPosition);
+		return filteredCategories.get(groupPosition).getCategory();
 	}
 
 	@Override
 	public int getGroupCount() {
-		return categories.size();
+		return filteredCategories.size();
 	}
 
 	@Override
 	public long getGroupId(int groupPosition) {
-		return categories.get(groupPosition).getId();
+		return filteredCategories.get(groupPosition).getCategory().getId();
 	}
 
 	@Override
 	public View getGroupView(int groupPosition, boolean expanded, View cv, ViewGroup parent) {
-		Category category = categories.get(groupPosition);
+		Category category = filteredCategories.get(groupPosition).getCategory();
 		return productViewFactory.getCategoryView(category, context, parent);
 	}
 
@@ -81,8 +86,24 @@ public class CatalogViewAdapter extends BaseExpandableListAdapter {
 		return false;
 	}
 
+	public void setFilterText(String filter) {
+		this.filterText = filter;
+		filterCategories();
+		notifyDataSetChanged();
+	}
+
 	private Product getProduct(int groupPosition, int childPosition) {
-		Category category = categories.get(groupPosition);
+		FilteredCategory category = filteredCategories.get(groupPosition);
 		return category.getProducts().get(childPosition);
+	}
+
+	private void filterCategories() {
+		filteredCategories.clear();
+		for (Category category : categories) {
+			FilteredCategory filteredCategory = FilteredCategory.create(category, filterText);
+			if (filteredCategory != null) {
+				filteredCategories.add(filteredCategory);
+			}
+		}
 	}
 }

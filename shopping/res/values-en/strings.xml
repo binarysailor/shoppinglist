@@ -19,4 +19,6 @@
 	<string name="catalog.edit.deleteCategory.confirmation.toast">The category "%s" has been deleted</string>
 	<string name="category_edit_category_name">Name</string>
 	<string name="category_edit_category_name_hint">Enter category name</string>
+	<string name="product_search_hint">Search products</string>
+	<string name="clear_filter">Clear</string>	
 </resources>

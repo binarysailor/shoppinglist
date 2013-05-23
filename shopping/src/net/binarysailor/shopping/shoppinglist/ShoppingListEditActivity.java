@@ -13,17 +13,20 @@ import net.binarysailor.shopping.shoppinglist.model.ProductSelection;
 import net.binarysailor.shopping.shoppinglist.model.ProductSelectionFactory;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 
 public class ShoppingListEditActivity extends Activity {
 
 	ProductSelection productSelection;
 	Set<Integer> expandedGroups = new HashSet<Integer>();
+	TreeGroupExpandListener expandListener = new TreeGroupExpandListener(expandedGroups);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +36,47 @@ public class ShoppingListEditActivity extends Activity {
 
 		List<Category> categories = new CatalogDAO(this).getCategories();
 		drawProductTree(categories);
+
+		EditText searchField = (EditText) findViewById(R.id.searchText);
+		searchField.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
+				CatalogViewAdapter adapter = (CatalogViewAdapter) categorizedProducts.getExpandableListAdapter();
+				String text = s.toString();
+				adapter.setFilterText(text);
+				if (text.trim().equals("")) {
+					restoreExpandCollapseState();
+				} else {
+					expandAll();
+				}
+			}
+
+			private void expandAll() {
+				ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
+				CatalogViewAdapter adapter = (CatalogViewAdapter) categorizedProducts.getExpandableListAdapter();
+				int groupCount = adapter.getGroupCount();
+				expandListener.stopListening();
+				for (int i = 0; i < groupCount; i++) {
+					categorizedProducts.expandGroup(i);
+				}
+				expandListener.startListening();
+			}
+		});
 	}
 
-	public void productTouched(View v) {
-		v.setBackgroundColor(Color.BLUE);
+	public void clearSearchFilterClicked(View v) {
+		EditText searchText = (EditText) findViewById(R.id.searchText);
+		searchText.setText("");
 	}
 
 	public void productCheckboxClicked(View v) {
@@ -56,33 +96,17 @@ public class ShoppingListEditActivity extends Activity {
 		productCheckboxClicked(checkBox);
 	}
 
+	public void searchTextChanged(View v) {
+		onSearchRequested();
+	}
+
 	private void drawProductTree(List<Category> categories) {
 		ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
-		// categorizedProducts.setAdapter(this, new
-		// ShoppingAdapter(categories));
-		/*
-		List<Map<String, String>> categoryMaps = new LinkedList<Map<String, String>>();
-		List<List<Map<String, String>>> productMaps = new LinkedList<List<Map<String, String>>>();
-		for (Category c : categories) {
-			Map<String, String> cm = new HashMap<String, String>();
-			cm.put("name", c.getName());
-			categoryMaps.add(cm);
-			List<Map<String, String>> productsForCategory = new LinkedList<Map<String, String>>();
-			for (Product p : c.getProducts()) {
-				Map<String, String> pm = new HashMap<String, String>();
-				pm.put("name", p.getName());
-				productsForCategory.add(pm);
-			}
-			productMaps.add(productsForCategory);
-		}
-		*/
 		ShoppingListEditProductViewFactory productViewFactory = new ShoppingListEditProductViewFactory(
 				this.productSelection);
 		categorizedProducts.setAdapter(new CatalogViewAdapter(this, productViewFactory));
-		TreeGroupExpandListener listener = new TreeGroupExpandListener(expandedGroups);
-
-		categorizedProducts.setOnGroupExpandListener(listener);
-		categorizedProducts.setOnGroupCollapseListener(listener);
+		categorizedProducts.setOnGroupExpandListener(expandListener);
+		categorizedProducts.setOnGroupCollapseListener(expandListener);
 	}
 
 	public void showFlatView(View source) {
@@ -92,17 +116,24 @@ public class ShoppingListEditActivity extends Activity {
 		startActivity(intent);
 	}
 
-	public void showTreeView(View source) {
-
-	}
-
 	@Override
 	protected void onStart() {
 		super.onStart();
+		restoreExpandCollapseState();
+	}
+
+	private void restoreExpandCollapseState() {
+		expandListener.stopListening();
 		ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
-		for (Integer groupIndex : expandedGroups) {
-			categorizedProducts.expandGroup(groupIndex);
+		int size = categorizedProducts.getExpandableListAdapter().getGroupCount();
+		for (int i = 0; i < size; i++) {
+			if (expandedGroups.contains(i)) {
+				categorizedProducts.expandGroup(i);
+			} else {
+				categorizedProducts.collapseGroup(i);
+			}
 		}
+		expandListener.startListening();
 	}
 
 	@Override
@@ -117,6 +148,7 @@ public class ShoppingListEditActivity extends Activity {
 		super.onRestoreInstanceState(savedInstanceState);
 		ArrayList<Integer> savedExpandedIndices = savedInstanceState.getIntegerArrayList("expandedGroups");
 		expandedGroups = new HashSet<Integer>(savedExpandedIndices);
+		expandListener.setExpanded(expandedGroups);
 		productSelection = (ProductSelection) savedInstanceState.getSerializable("productSelection");
 	}
 }

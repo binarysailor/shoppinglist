@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+    android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     tools:context=".ShoppingActivity" >
@@ -33,18 +33,38 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:clickable="true"
             android:onClick="showFlatView" />
-        
-        
-        <!-- 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/searchText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="12"
+            android:hint="@string/product_search_hint" />
+
+        <ImageButton
+            android:id="@+id/imageButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="clearSearchFilterClicked"
+            android:contentDescription="@string/clear_filter"
+            android:src="@drawable/cross24" />
+		<!-- 
         <Button
-            android:id="@+id/flatView"
+            android:id="@+id/button1"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/shopping.button.flatView"
-            android:onClick="showFlatView"
-            android:drawableLeft="@android:drawable/ic_menu_agenda" />
-             -->
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/cross16"
+            android:onClick="clearSearchFilterClicked"
+            android:text="@string/clear_filter" />
+         -->
+
     </LinearLayout>
 
     <ExpandableListView

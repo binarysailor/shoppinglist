@@ -96,15 +96,12 @@ public class ShoppingListEditActivity extends Activity {
 		productCheckboxClicked(checkBox);
 	}
 
-	public void searchTextChanged(View v) {
-		onSearchRequested();
-	}
-
 	private void drawProductTree(List<Category> categories) {
 		ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
 		ShoppingListEditProductViewFactory productViewFactory = new ShoppingListEditProductViewFactory(
 				this.productSelection);
-		categorizedProducts.setAdapter(new CatalogViewAdapter(this, productViewFactory));
+		CatalogViewAdapter adapter = new CatalogViewAdapter(this, productViewFactory);
+		categorizedProducts.setAdapter(adapter);
 		categorizedProducts.setOnGroupExpandListener(expandListener);
 		categorizedProducts.setOnGroupCollapseListener(expandListener);
 	}

@@ -6,9 +6,7 @@ import java.util.List;
 
 import net.binarysailor.shopping.catalog.model.Category;
 import net.binarysailor.shopping.catalog.model.Product;
-import net.binarysailor.shopping.common.DatabaseOperations;
 import net.binarysailor.shopping.common.DatabaseUtils;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -36,21 +34,8 @@ public class CatalogDAO {
 
 	public void createCategory(final Category editedCategory) {
 		assertCategoriesLoaded();
-		int categoryId = (Integer) DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-			@Override
-			public Object execute(SQLiteDatabase db) {
-				ContentValues values = new ContentValues();
-				values.put(CatalogContract.Category.NAME, editedCategory.getName());
-				values.put(CatalogContract.Category.SORT_ORDER, generateSortOrder());
-				values.put(CatalogContract.Category.ACTIVE, true);
-				long rowid = db.insert(CatalogContract.Category.TABLE_NAME, null, values);
-				Cursor idCursor = db.rawQuery("select " + CatalogContract.Category.ID + " from "
-						+ CatalogContract.Category.TABLE_NAME + " where ROWID = ?",
-						new String[] { String.valueOf(rowid) });
-				idCursor.moveToFirst();
-				return idCursor.getInt(0);
-			}
-		});
+		Integer categoryId = (Integer) DatabaseUtils.executeInTransaction(context, new CatalogDatabaseOperations.InsertCategory(
+				editedCategory));
 		editedCategory.setId(categoryId);
 		CatalogDAO.categories.add(editedCategory);
 	}
@@ -67,16 +52,7 @@ public class CatalogDAO {
 	public void updateCategory(final Category editedCategory) {
 		for (Category c : getCategories()) {
 			if (c.getId() == editedCategory.getId()) {
-				DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-					@Override
-					public Object execute(SQLiteDatabase db) {
-						ContentValues values = new ContentValues();
-						values.put(CatalogContract.Category.NAME, editedCategory.getName());
-						db.update(CatalogContract.Category.TABLE_NAME, values, CatalogContract.Category.ID + " = ?",
-								new String[] { String.valueOf(editedCategory.getId()) });
-						return null;
-					}
-				});
+				DatabaseUtils.executeInTransaction(context, new CatalogDatabaseOperations.UpdateCategory(editedCategory));
 				c.setName(editedCategory.getName());
 				break;
 			}
@@ -88,35 +64,15 @@ public class CatalogDAO {
 		while (c.hasNext()) {
 			Category category = c.next();
 			if (category.getId() == id) {
-				DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-					@Override
-					public Object execute(SQLiteDatabase db) {
-						String[] queryArgs = new String[] { String.valueOf(id) };
-						ContentValues values = new ContentValues();
-						values.put("active", false);
-						db.update(CatalogContract.Category.TABLE_NAME, values, CatalogContract.Category.ID + " = ?",
-								queryArgs);
-						return null;
-					}
-				});
+				DatabaseUtils.executeInTransaction(context, new CatalogDatabaseOperations.DeleteCategory(id));
 				c.remove();
 			}
 		}
 	}
 
 	public void createProduct(final Product editedProduct) {
-		int productId = (Integer) DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-			@Override
-			public Object execute(SQLiteDatabase db) {
-				ContentValues values = new ContentValues();
-				values.put(CatalogContract.Product.CATEGORY_ID, editedProduct.getCategory().getId());
-				values.put(CatalogContract.Product.NAME, editedProduct.getName());
-				values.put(CatalogContract.Product.SORT_ORDER, generateSortOrder());
-				values.put(CatalogContract.Product.ACTIVE, true);
-				long rowid = db.insert(CatalogContract.Product.TABLE_NAME, null, values);
-				return (int) rowid;
-			}
-		});
+		Integer productId = (Integer) DatabaseUtils.executeInTransaction(context,
+				new CatalogDatabaseOperations.InsertProduct(editedProduct));
 		editedProduct.setId(productId);
 		Category category = getCategoryById(editedProduct.getCategory().getId());
 		category.addProduct(editedProduct);
@@ -131,16 +87,7 @@ public class CatalogDAO {
 	public void updateProduct(final Product editedProduct) {
 		Product product = CatalogDAO.productsById.get(editedProduct.getId());
 		if (product != null) {
-			DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-				@Override
-				public Object execute(SQLiteDatabase db) {
-					ContentValues values = new ContentValues();
-					values.put(CatalogContract.Product.NAME, editedProduct.getName());
-					db.update(CatalogContract.Product.TABLE_NAME, values, CatalogContract.Product.ID + " = ?",
-							new String[] { String.valueOf(editedProduct.getId()) });
-					return null;
-				}
-			});
+			DatabaseUtils.executeInTransaction(context, new CatalogDatabaseOperations.UpdateProduct(editedProduct));
 			product.setName(editedProduct.getName());
 		}
 	}
@@ -150,17 +97,7 @@ public class CatalogDAO {
 		if (product != null) {
 			product.getCategory().removeProduct(product);
 			CatalogDAO.productsById.remove(id);
-			DatabaseUtils.executeInTransaction(context, new DatabaseOperations() {
-				@Override
-				public Object execute(SQLiteDatabase db) {
-					String[] queryArgs = new String[] { String.valueOf(id) };
-					ContentValues values = new ContentValues();
-					values.put("active", false);
-					db.update(CatalogContract.Product.TABLE_NAME, values, CatalogContract.Product.ID + " = ?",
-							queryArgs);
-					return null;
-				}
-			});
+			DatabaseUtils.executeInTransaction(context, new CatalogDatabaseOperations.DeleteProduct(id));
 		}
 	}
 
@@ -172,8 +109,8 @@ public class CatalogDAO {
 
 	private void loadCategories() {
 		SQLiteDatabase db = DatabaseUtils.getReadableDatabase(context);
-		Cursor cursor = db.query(CatalogContract.Category.TABLE_NAME, CATEGORY_COLUMNS, CatalogContract.Category.ACTIVE
-				+ " = 1", null, null, null, CatalogContract.Category.SORT_ORDER);
+		Cursor cursor = db.query(CatalogContract.Category.TABLE_NAME, CATEGORY_COLUMNS, CatalogContract.Category.ACTIVE + " = 1", null,
+				null, null, CatalogContract.Category.SORT_ORDER);
 		List<Category> categories = new LinkedList<Category>();
 		SparseArray<Category> categoriesById = new SparseArray<Category>();
 		boolean dataAvailable = cursor.moveToFirst();
@@ -185,8 +122,8 @@ public class CatalogDAO {
 		}
 		cursor.close();
 		CatalogDAO.productsById = new SparseArray<Product>();
-		cursor = db.query(CatalogContract.Product.TABLE_NAME, PRODUCT_COLUMNS, CatalogContract.Product.ACTIVE + " = 1",
-				null, null, null, CatalogContract.Product.CATEGORY_ID + "," + CatalogContract.Product.SORT_ORDER);
+		cursor = db.query(CatalogContract.Product.TABLE_NAME, PRODUCT_COLUMNS, CatalogContract.Product.ACTIVE + " = 1", null, null, null,
+				CatalogContract.Product.CATEGORY_ID + "," + CatalogContract.Product.SORT_ORDER);
 		dataAvailable = cursor.moveToFirst();
 		while (dataAvailable) {
 			Product product = EntityFactory.createProduct(cursor);
@@ -200,9 +137,5 @@ public class CatalogDAO {
 		cursor.close();
 		db.close();
 		CatalogDAO.categories = categories;
-	}
-
-	private String generateSortOrder() {
-		return "z" + System.currentTimeMillis();
 	}
 }

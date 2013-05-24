@@ -17,7 +17,7 @@ class FilteredCategory {
 		for (Product product : category.getProducts()) {
 			fc.addProductIfMatches(product);
 		}
-		return fc.isEmpty() ? null : fc;
+		return fc.filteringRequested() && fc.isEmpty() ? null : fc;
 	}
 
 	private FilteredCategory(Category category, String filterText) {

@@ -85,10 +85,15 @@ public class CatalogViewAdapter extends BaseExpandableListAdapter {
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
 		return false;
 	}
+	
+	@Override
+	public void notifyDataSetChanged() {
+		filterCategories();
+		super.notifyDataSetChanged();
+	}
 
 	public void setFilterText(String filter) {
 		this.filterText = filter;
-		filterCategories();
 		notifyDataSetChanged();
 	}
 

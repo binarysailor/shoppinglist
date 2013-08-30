@@ -27,6 +27,7 @@
 	<string name="product_edit_product_name_hint">Enter product name</string>	
 	<string name="product_search_hint">Search products</string>
 	<string name="clear_filter">Clear</string>	
+	<string name="menu_new_list">New list</string>
 	<string name="menu_add_non_catalog_product">Add non-catalog product</string>
 	<string name="menu_show_shopping_lists">Saved lists</string>
 	<string name="menu_save_current_shopping_list">Save</string>

@@ -55,7 +55,6 @@ public class ShoppingListEditActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater menuInflater = getMenuInflater();
 		menuInflater.inflate(R.menu.shopping_list_edit, menu);
-		// manageMenuSaveOption(menu);
 		return true;
 	}
 
@@ -84,6 +83,10 @@ public class ShoppingListEditActivity extends Activity {
 			break;
 		case R.id.add_non_catalog_product:
 			addNonCatalogProduct("Any product");
+			break;
+		case R.id.new_list:
+			resetList();
+			break;
 		}
 		return true;
 	}
@@ -264,6 +267,13 @@ public class ShoppingListEditActivity extends Activity {
 		productSelection.deselectAll();
 		productSelection.add(shoppingList.toSelection());
 		setTitle(shoppingList.getName());
+	}
+
+	public void resetList() {
+		this.loadedList = null;
+		productSelection.deselectAll();
+		((CatalogViewAdapter) getCatalogView().getExpandableListAdapter()).notifyDataSetChanged();
+		setTitle(getString(R.string.title_activity_shopping));
 	}
 
 	private ExpandableListView getCatalogView() {

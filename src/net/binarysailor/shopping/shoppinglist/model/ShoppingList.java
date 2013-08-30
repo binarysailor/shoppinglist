@@ -53,8 +53,10 @@ public class ShoppingList implements Serializable, Cloneable {
 	}
 
 	public void setProducts(Collection<Product> products) {
-		products.clear();
-		products.addAll(products);
+		this.products.clear();
+		for (Product p : products) {
+			enlistProduct(p, BigDecimal.ONE);
+		}
 	}
 
 	@Override

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="initial_categories">
+		<item>NAB:Nabiał</item>
+		<item>PIE:Pieczywo</item>
+		<item>MIE:Mięso i wędliny</item>
+		<item>PTW:Przetwory</item>
+		<item>PPR:Przyprawy</item>
+		<item>OWO:Owoce i warzywa</item>
+		<item>NAP:Napoje</item>
+		<item>UZY:Używki</item>
+		<item>SLO:Słodycze i przekąski</item>
+		<item>SYP:Artykuły sypkie</item>
+		<item>CHE:Chemia gospodarcza</item>
+		<item>KHI:Kosmetyki i higiena</item>
+		<item>SPR:Sprzątanie</item>
+    </string-array>
+    
+    <string-array name="initial_products">
+        <item>NAB:Śmietana kwaśna</item>
+        <item>NAB:Śmietana słodka</item>
+        <item>NAB:Serek homogenizowany</item>
+        <item>NAB:Jogurt</item>
+        <item>NAB:Masło</item>
+        <item>NAB:Mleko</item>
+        <item>NAB:Jajka</item>
+        <item>NAB:Mleczko do kawy</item>
+        <item>PIE:Chleb biały</item>
+        <item>PIE:Chleb ciemny</item>
+        <item>PIE:Bułka</item>
+        <item>PIE:Chleb tostowy</item>
+        <item>MIE:Kiełbasa</item>
+        <item>MIE:Szynka</item>
+        <item>MIE:Pierś kurczaka</item>
+        <item>MIE:Schab</item>
+        <item>PTW:Ketchup</item>
+        <item>PTW:Koncentrat pomidorowy</item>
+        <item>PTW:Musztarda</item>
+        <item>PTW:Chrzan</item>
+        <item>PTW:Oliwki</item>
+        <item>PTW:Dżem</item>
+        <item>PPR:Sól</item>
+        <item>PPR:Pieprz</item>
+        <item>PPR:Bazylia</item>
+        <item>PPR:Oregano</item>
+        <item>PPR:Gałka muszkatołowa</item>
+        <item>OWO:Jabłka</item>
+        <item>OWO:Winogrona</item>
+        <item>OWO:Pomarańcze</item>
+        <item>OWO:Ziemniaki</item>
+        <item>OWO:Sałata</item>
+        <item>OWO:Kapusta</item>
+        <item>OWO:Pomidory</item>
+        <item>OWO:Ogórki</item>
+        <item>OWO:Cebula</item>
+        <item>OWO:Czosnek</item>
+        <item>NAP:Woda</item>
+        <item>NAP:Coca cola</item>
+        <item>NAP:Sprite</item>
+        <item>NAP:Sok</item>
+        <item>UZY:Kawa</item>
+        <item>UZY:Herbata</item>
+        <item>UZY:Piwo</item>
+        <item>UZY:Wino</item>
+        <item>SLO:Czekolada</item>
+        <item>SLO:Cukierki</item>
+        <item>SLO:Ciastka</item>
+        <item>SLO:Lody</item>
+        <item>SLO:Nutella</item>
+        <item>SLO:Chipsy</item>
+        <item>SLO:Paluszki</item>
+        <item>SLO:Orzeszki</item>
+        <item>SYP:Makaron</item>
+        <item>SYP:Kasza manna</item>
+        <item>SYP:Kasza gryczana</item>
+        <item>SYP:Cukier</item>
+        <item>SYP:Mąka</item>
+        <item>SYP:Mąka ziemniaczana</item>
+        <item>SYP:Płatki śniadaniowe</item>
+        <item>SYP:Płatki migdałowe</item>
+        <item>SYP:Rodzynki</item>
+        <item>SYP:Pestki słonecznika</item>
+        <item>CHE:Płyn do mycia toalet</item>
+        <item>CHE:Płyn do podłóg</item>
+        <item>CHE:Preparat do udrażniania</item>
+        <item>CHE:Proszek do prania</item>
+        <item>CHE:Płyn do płukania tkanin</item>
+        <item>CHE:Płyn do zmywania naczyń</item>
+        <item>CHE:Zapach do muszli</item>
+        <item>CHE:Odświeżacz do łazienki</item>
+        <item>CHE:Zapach do pomieszczeń</item>
+        <item>KHI:Pasta do zębów</item>
+        <item>KHI:Mydło</item>
+        <item>KHI:Żel pod prysznic</item>
+        <item>KHI:Dezodorant</item>
+        <item>KHI:Perfumy</item>
+        <item>KHI:Krem do rąk</item>
+        <item>KHI:Krem do twarzy</item>
+        <item>KHI:Papier toaletowy</item>
+        <item>KHI:Ręcznik papierowy</item>
+        <item>KHI:Płatki kosmetyczne</item>
+        <item>KHI:Podpaski</item>
+        <item>SPR:Zmywaki gąbkowe</item>
+        <item>SPR:Ściereczki gąbkowe</item>
+        <item>SPR:Worki na śmieci</item>
+        <item>SPR:Rękawice gumowe</item>
+    </string-array>
+</resources>

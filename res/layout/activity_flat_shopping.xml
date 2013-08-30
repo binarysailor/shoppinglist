@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context=".FlatShoppingListActivity" >
+
+    <LinearLayout
+        android:id="@+id/flatShoppingListLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/textViewEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_activity_shopping"
+            android:textAppearance="?android:attr/textAppearanceMedium"  
+            android:clickable="true"
+            android:onClick="showTreeView" />
+        
+        <ImageView 
+            android:src="@android:drawable/ic_media_play" 
+            android:contentDescription="" 
+            android:layout_width="wrap_content" 
+            android:layout_height="fill_parent" />
+
+        <TextView
+            android:id="@+id/textViewGoShopping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_activity_flat_shopping"
+            style="@style/ActiveLink" />
+        
+        <!-- 
+        <Button
+            android:id="@+id/treeView"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/shopping.button.treeView"
+            android:onClick="showTreeView"
+            android:drawableLeft="@android:drawable/ic_menu_edit" />
+            -->
+    </LinearLayout>
+
+    <ListView 
+        android:id="@+id/flatShoppingList" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" >
+        
+    </ListView>
+    
+</LinearLayout>

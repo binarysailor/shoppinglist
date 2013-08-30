@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item 
+        android:id="@+id/add_non_catalog_product" 
+        android:title="@string/menu_add_non_catalog_product" 
+        android:enabled="true" android:visible="true">
+    </item>      
+    <item 
+        android:id="@+id/load_list" 
+        android:title="@string/menu_show_shopping_lists" 
+        android:enabled="true" android:visible="true">
+    </item>    
+    <item 
+        android:id="@+id/save_current_list" 
+        android:title="@string/menu_save_current_shopping_list" 
+        android:enabled="true" android:visible="true">
+    </item>
+    <item 
+        android:id="@+id/save_current_list_as" 
+        android:title="@string/menu_save_current_shopping_list_as" 
+        android:enabled="true" android:visible="true">
+    </item>    
+	
+</menu>

@@ -8,16 +8,10 @@ import net.binarysailor.shopping.catalog.model.Product;
 public class EnlistedProduct implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 	private Product product;
-	private String nonCatalogProductName;
 	private BigDecimal quantity;
 
 	public EnlistedProduct(Product product, BigDecimal quantity) {
 		this.product = product;
-		this.quantity = quantity;
-	}
-
-	public EnlistedProduct(String name, BigDecimal quantity) {
-		this.nonCatalogProductName = name;
 		this.quantity = quantity;
 	}
 
@@ -29,16 +23,16 @@ public class EnlistedProduct implements Serializable, Cloneable {
 		this.product = product;
 	}
 
-	public void setNonCatalogProductName(String nonCatalogProductName) {
-		this.nonCatalogProductName = nonCatalogProductName;
-	}
-
 	public BigDecimal getQuantity() {
 		return quantity;
 	}
 
 	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
+	}
+
+	public boolean isInCatalog() {
+		return product.isInCatalog();
 	}
 
 	@Override

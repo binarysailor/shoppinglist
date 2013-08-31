@@ -1,14 +1,14 @@
-package net.binarysailor.shopping.shoppinglist;
+package net.binarysailor.shopping.common.ui;
 
-import android.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 
-public class SaveAsNameWatcher implements TextWatcher {
-	private AlertDialog dialog;
+class TextNotEmptyWatcher implements TextWatcher {
+	private View targetView;
 
-	public void setDialog(AlertDialog dialog) {
-		this.dialog = dialog;
+	public void setTargetView(View targetView) {
+		this.targetView = targetView;
 	}
 
 	@Override
@@ -17,8 +17,10 @@ public class SaveAsNameWatcher implements TextWatcher {
 
 	@Override
 	public void afterTextChanged(Editable s) {
-		String listName = s.toString();
-		dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(isValid(listName));
+		if (targetView != null) {
+			String listName = s.toString();
+			targetView.setEnabled(isValid(listName));
+		}
 	}
 
 	@Override

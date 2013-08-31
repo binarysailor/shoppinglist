@@ -9,6 +9,7 @@ class EntityFactory {
 		Category c = new Category();
 		c.setId(cursor.getInt(0));
 		c.setName(cursor.getString(1));
+		c.setOrder(cursor.getString(2));
 		return c;
 	}
 
@@ -16,9 +17,11 @@ class EntityFactory {
 		Product p = new Product();
 		p.setId(cursor.getInt(0));
 		p.setName(cursor.getString(1));
-		Category c = new Category();
-		c.setId(cursor.getInt(2));
-		p.setCategory(c);
+		if (!cursor.isNull(2)) {
+			Category c = new Category();
+			c.setId(cursor.getInt(2));
+			p.setCategory(c);
+		}
 		return p;
 	}
 }

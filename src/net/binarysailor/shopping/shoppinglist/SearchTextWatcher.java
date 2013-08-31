@@ -1,7 +1,6 @@
 package net.binarysailor.shopping.shoppinglist;
 
 import net.binarysailor.shopping.R;
-import net.binarysailor.shopping.catalog.CatalogViewAdapter;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ExpandableListView;

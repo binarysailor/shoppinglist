@@ -20,9 +20,11 @@ public class ShoppingListDAO {
 	private static List<ShoppingList> shoppingLists;
 
 	private Context context;
+	private CatalogDAO catalogDAO;
 
 	public ShoppingListDAO(Context context) {
 		this.context = context;
+		this.catalogDAO = new CatalogDAO(context);
 	}
 
 	public List<ShoppingList> getShoppingLists() {
@@ -80,9 +82,8 @@ public class ShoppingListDAO {
 	private void loadShoppingLists() {
 		List<ShoppingList> shoppingLists = new LinkedList<ShoppingList>();
 		SQLiteDatabase db = DatabaseUtils.getReadableDatabase(context);
-		Cursor cursor = db.rawQuery("SELECT sl.id, sl.name, ep.quantity, ep.non_catalog_name, p.id, p.name FROM shopping_list sl "
-				+ "JOIN enlisted_product ep ON sl.id = ep.shopping_list_id "
-				+ "LEFT JOIN product p ON p.id = ep.product_id ORDER BY sl.name, sl.id", null);
+		Cursor cursor = db.rawQuery("SELECT sl.id, sl.name, ep.quantity, ep.product_id FROM shopping_list sl "
+				+ "JOIN enlisted_product ep ON sl.id = ep.shopping_list_id " + "ORDER BY sl.name, sl.id", null);
 		boolean dataAvailable = cursor.moveToFirst();
 		ShoppingList current = null;
 		while (dataAvailable) {
@@ -93,19 +94,9 @@ public class ShoppingListDAO {
 				current.setName(cursor.getString(1));
 				shoppingLists.add(current);
 			}
-			if (cursor.isNull(4)) {
-				String name = cursor.getString(3);
-				current.enlistNonCatalogProduct(name, BigDecimal.ONE);
-			} else {
-				Product p = new Product();
-				p.setId(cursor.getInt(4));
-				p.setName(cursor.getString(5));
-				/*
-				BigDecimal quantity = new BigDecimal(cursor.getDouble(2));
-				quantity = quantity.setScale(2, BigDecimal.ROUND_HALF_EVEN);
-				*/
-				current.enlistProduct(p, BigDecimal.ONE);
-			}
+			int productId = cursor.getInt(3);
+			Product p = catalogDAO.getProductById(productId);
+			current.enlistProduct(p, BigDecimal.ONE);
 			dataAvailable = cursor.moveToNext();
 		}
 		cursor.close();

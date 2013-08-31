@@ -34,13 +34,18 @@ public class ShoppingList implements Serializable, Cloneable {
 		return products;
 	}
 
-	public void enlistProduct(Product p, BigDecimal quantity) {
-		EnlistedProduct ep = new EnlistedProduct(p, quantity);
-		products.add(ep);
+	public List<EnlistedProduct> getNonCatalogProducts() {
+		List<EnlistedProduct> result = new LinkedList<EnlistedProduct>();
+		for (EnlistedProduct ep : products) {
+			if (!ep.isInCatalog()) {
+				result.add(ep);
+			}
+		}
+		return result;
 	}
 
-	public void enlistNonCatalogProduct(String name, BigDecimal quantity) {
-		EnlistedProduct ep = new EnlistedProduct(name, quantity);
+	public void enlistProduct(Product p, BigDecimal quantity) {
+		EnlistedProduct ep = new EnlistedProduct(p, quantity);
 		products.add(ep);
 	}
 

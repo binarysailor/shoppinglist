@@ -15,14 +15,16 @@ public class ShoppingListSQLiteHelper implements ModuleSQLiteHelper {
 		db.execSQL("CREATE TABLE shopping_list (" + "id INTEGER PRIMARY KEY AUTOINCREMENT, " + "name TEXT)");
 		db.execSQL("CREATE TABLE enlisted_product (" + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ "product_id INTEGER NOT NULL REFERENCES product(id) ON DELETE CASCADE, "
-				+ "shopping_list_id INTEGER NOT NULL REFERENCES shopping_list(id) ON DELETE CASCADE, " + "quantity DECIMAL(10,2), "
-				+ "non_catalog_name TEXT)");
+				+ "shopping_list_id INTEGER NOT NULL REFERENCES shopping_list(id) ON DELETE CASCADE, " + "quantity DECIMAL(10,2))");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
 		if (newVer >= 2) {
 			db.execSQL("ALTER TABLE enlisted_product ADD COLUMN non_catalog_name TEXT");
+		}
+		if (newVer >= 3) {
+			db.execSQL("ALTER TABLE enlisted_product DROP COLUMN non_catalog_name");
 		}
 	}
 

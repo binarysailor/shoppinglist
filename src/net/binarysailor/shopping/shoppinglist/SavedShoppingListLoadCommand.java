@@ -15,11 +15,7 @@ public class SavedShoppingListLoadCommand implements SavedShoppingListCommand {
 	}
 
 	public void execute(ShoppingListEditActivity target) {
-		if (replace) {
-			target.loadList(shoppingList);
-		} else {
-			target.getProductSelection().add(shoppingList.toSelection());
-		}
+		target.loadList(shoppingList, replace);
 	}
 
 }

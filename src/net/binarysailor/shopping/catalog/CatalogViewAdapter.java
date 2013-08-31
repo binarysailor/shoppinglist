@@ -1,6 +1,5 @@
 package net.binarysailor.shopping.catalog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.binarysailor.shopping.catalog.dao.CatalogDAO;
@@ -11,29 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 
-public class CatalogViewAdapter extends BaseExpandableListAdapter {
-
-	public interface CatalogViewFactory {
-		View getProductView(Product product, Context context, ViewGroup parent);
-
-		View getCategoryView(Category category, Context context, ViewGroup parent);
-	}
+class CatalogViewAdapter extends BaseExpandableListAdapter {
 
 	Context context;
 	List<Category> categories;
-	List<FilteredCategory> filteredCategories;
-	CatalogViewFactory productViewFactory;
+	CatalogEditViewFactory productViewFactory;
 	String filterText;
-	Category nonCatalogItems;
 
-	public CatalogViewAdapter(Context context, CatalogViewFactory productViewFactory) {
+	public CatalogViewAdapter(Context context) {
 		this.context = context;
-		this.categories = new CatalogDAO(context).getCategories();
-		this.productViewFactory = productViewFactory;
-		this.filteredCategories = new ArrayList<FilteredCategory>(categories.size());
-		this.nonCatalogItems = new Category();
-		this.nonCatalogItems.setName("Extra");
-		filterCategories();
+		categories = new CatalogDAO(context).getCategories();
+		this.productViewFactory = new CatalogEditViewFactory();
 	}
 
 	@Override
@@ -55,28 +42,31 @@ public class CatalogViewAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		return filteredCategories.get(groupPosition).getProducts().size();
+		return getCategory(groupPosition).getProducts().size();
 	}
 
 	@Override
 	public Object getGroup(int groupPosition) {
-		return filteredCategories.get(groupPosition).getCategory();
+		return getCategory(groupPosition);
+	}
+
+	private Category getCategory(int groupPosition) {
+		return categories.get(groupPosition);
 	}
 
 	@Override
 	public int getGroupCount() {
-		return filteredCategories.size();
+		return categories.size();
 	}
 
 	@Override
 	public long getGroupId(int groupPosition) {
-		return filteredCategories.get(groupPosition).getCategory().getId();
+		return getCategory(groupPosition).getId();
 	}
 
 	@Override
 	public View getGroupView(int groupPosition, boolean expanded, View cv, ViewGroup parent) {
-		Category category = filteredCategories.get(groupPosition).getCategory();
-		return productViewFactory.getCategoryView(category, context, parent);
+		return productViewFactory.getCategoryView(getCategory(groupPosition), context, parent);
 	}
 
 	@Override
@@ -89,40 +79,14 @@ public class CatalogViewAdapter extends BaseExpandableListAdapter {
 		return false;
 	}
 
-	@Override
-	public void notifyDataSetChanged() {
-		filterCategories();
-		super.notifyDataSetChanged();
-	}
-
 	public void setFilterText(String filter) {
 		this.filterText = filter;
 		notifyDataSetChanged();
 	}
 
 	private Product getProduct(int groupPosition, int childPosition) {
-		FilteredCategory category = filteredCategories.get(groupPosition);
+		Category category = getCategory(groupPosition);
 		return category.getProducts().get(childPosition);
 	}
 
-	private void filterCategories() {
-		filteredCategories.clear();
-		for (Category category : categories) {
-			FilteredCategory filteredCategory = FilteredCategory.create(category, filterText);
-			if (filteredCategory != null) {
-				filteredCategories.add(filteredCategory);
-			}
-		}
-		FilteredCategory filteredNonCatalog = FilteredCategory.create(nonCatalogItems, filterText);
-		if (filteredNonCatalog != null && !filteredNonCatalog.isEmpty()) {
-			filteredCategories.add(filteredNonCatalog);
-		}
-	}
-
-	public void addNonCatalogProduct(String name) {
-		Product pseudoProduct = new Product();
-		pseudoProduct.setName(name);
-		nonCatalogItems.addProduct(pseudoProduct);
-		notifyDataSetChanged();
-	}
 }

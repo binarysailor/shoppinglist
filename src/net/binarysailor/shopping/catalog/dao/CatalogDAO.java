@@ -18,7 +18,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.SparseArray;
 
 public class CatalogDAO {
-	private static String[] CATEGORY_COLUMNS = { CatalogContract.Category.ID, CatalogContract.Category.NAME };
+	private static String[] CATEGORY_COLUMNS = { CatalogContract.Category.ID, CatalogContract.Category.NAME,
+			CatalogContract.Category.SORT_ORDER };
 
 	private static String[] PRODUCT_COLUMNS = { CatalogContract.Product.ID, CatalogContract.Product.NAME,
 			CatalogContract.Product.CATEGORY_ID };
@@ -46,6 +47,7 @@ public class CatalogDAO {
 	}
 
 	public Category getCategoryById(int id) {
+		assertCategoriesLoaded();
 		for (Category c : getCategories()) {
 			if (c.getId() == id) {
 				return c;
@@ -79,8 +81,10 @@ public class CatalogDAO {
 		Integer productId = (Integer) DatabaseUtils.executeInTransaction(context,
 				new CatalogDatabaseOperations.InsertProduct(editedProduct));
 		editedProduct.setId(productId);
-		Category category = getCategoryById(editedProduct.getCategory().getId());
-		category.addProduct(editedProduct);
+		if (editedProduct.getCategory() != null) {
+			Category category = getCategoryById(editedProduct.getCategory().getId());
+			category.addProduct(editedProduct);
+		}
 		CatalogDAO.productsById.put(productId, editedProduct);
 	}
 
@@ -98,6 +102,7 @@ public class CatalogDAO {
 	}
 
 	public void updateProduct(final Product editedProduct) {
+		assertCategoriesLoaded();
 		Product product = CatalogDAO.productsById.get(editedProduct.getId());
 		if (product != null) {
 			DatabaseUtils.executeInTransaction(context, new CatalogDatabaseOperations.UpdateProduct(editedProduct));
@@ -115,6 +120,7 @@ public class CatalogDAO {
 	}
 
 	public Collection<Product> getAllProducts() {
+		assertCategoriesLoaded();
 		return CatalogDAO.productsById.values();
 	}
 
@@ -145,11 +151,13 @@ public class CatalogDAO {
 		dataAvailable = cursor.moveToFirst();
 		while (dataAvailable) {
 			Product product = EntityFactory.createProduct(cursor);
-			Category c = categoriesById.get(product.getCategory().getId());
-			if (c != null) {
-				c.addProduct(product);
-				CatalogDAO.productsById.put(product.getId(), product);
+			if (product.getCategory() != null) {
+				Category c = categoriesById.get(product.getCategory().getId());
+				if (c != null) {
+					c.addProduct(product);
+				}
 			}
+			CatalogDAO.productsById.put(product.getId(), product);
 			dataAvailable = cursor.moveToNext();
 		}
 		cursor.close();

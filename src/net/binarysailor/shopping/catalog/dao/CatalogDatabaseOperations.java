@@ -74,7 +74,9 @@ class CatalogDatabaseOperations {
 		@Override
 		public Object execute(SQLiteDatabase db) {
 			ContentValues values = new ContentValues();
-			values.put(CatalogContract.Product.CATEGORY_ID, productToInsert.getCategory().getId());
+			if (productToInsert.getCategory() != null) {
+				values.put(CatalogContract.Product.CATEGORY_ID, productToInsert.getCategory().getId());
+			}
 			values.put(CatalogContract.Product.NAME, productToInsert.getName());
 			values.put(CatalogContract.Product.SORT_ORDER, CatalogDatabaseOperations.generateSortOrder());
 			values.put(CatalogContract.Product.ACTIVE, true);

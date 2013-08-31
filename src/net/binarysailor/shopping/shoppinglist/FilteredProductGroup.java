@@ -1,28 +1,27 @@
-package net.binarysailor.shopping.catalog;
+package net.binarysailor.shopping.shoppinglist;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import net.binarysailor.shopping.catalog.model.Category;
 import net.binarysailor.shopping.catalog.model.Product;
 
-class FilteredCategory {
+class FilteredProductGroup {
 
-	private Category category;
+	private ProductGroup productGroup;
 	private List<Product> products;
 	private String filterText;
 
-	public static FilteredCategory create(Category category, String filterText) {
-		FilteredCategory fc = new FilteredCategory(category, filterText);
-		for (Product product : category.getProducts()) {
+	public static FilteredProductGroup create(ProductGroup productGroup, String filterText) {
+		FilteredProductGroup fc = new FilteredProductGroup(productGroup, filterText);
+		for (Product product : productGroup.getProducts()) {
 			fc.addProductIfMatches(product);
 		}
 		return fc.filteringRequested() && fc.isEmpty() ? null : fc;
 	}
 
-	private FilteredCategory(Category category, String filterText) {
-		this.category = category;
+	private FilteredProductGroup(ProductGroup category, String filterText) {
+		this.productGroup = category;
 		this.products = new LinkedList<Product>();
 		this.filterText = filterText;
 		if (this.filterText != null) {
@@ -30,8 +29,8 @@ class FilteredCategory {
 		}
 	}
 
-	public Category getCategory() {
-		return category;
+	public ProductGroup getProductGroup() {
+		return productGroup;
 	}
 
 	public List<Product> getProducts() {

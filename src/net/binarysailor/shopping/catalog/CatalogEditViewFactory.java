@@ -1,7 +1,6 @@
 package net.binarysailor.shopping.catalog;
 
 import net.binarysailor.shopping.R;
-import net.binarysailor.shopping.catalog.CatalogViewAdapter.CatalogViewFactory;
 import net.binarysailor.shopping.catalog.model.Category;
 import net.binarysailor.shopping.catalog.model.Product;
 import android.content.Context;
@@ -10,9 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class CatalogEditViewFactory implements CatalogViewFactory {
+public class CatalogEditViewFactory {
 
-	@Override
 	public View getProductView(Product product, Context context, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.catalog_edit_exp_list_product, parent, false);
@@ -27,7 +25,6 @@ public class CatalogEditViewFactory implements CatalogViewFactory {
 		return view;
 	}
 
-	@Override
 	public View getCategoryView(Category category, Context context, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.catalog_edit_exp_list_category, parent, false);

@@ -33,6 +33,10 @@ public class Product implements Serializable {
 		this.category = category;
 	}
 
+	public boolean isInCatalog() {
+		return this.category != null;
+	}
+
 	public boolean isNew() {
 		return id == 0;
 	}

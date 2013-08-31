@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Category implements Serializable {
+public class Category implements Serializable, Comparable<Category> {
 	private static final long serialVersionUID = 1L;
 
 	int id;
@@ -60,4 +60,15 @@ public class Category implements Serializable {
 		return id == 0;
 	}
 
+	public void removeAllProducts() {
+		for (Product p : products) {
+			p.setCategory(null);
+		}
+		products.clear();
+	}
+
+	@Override
+	public int compareTo(Category another) {
+		return order.compareTo(another.order);
+	}
 }

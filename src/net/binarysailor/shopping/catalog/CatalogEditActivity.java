@@ -40,8 +40,8 @@ public class CatalogEditActivity extends Activity {
 	public void confirmDeleteCategory(View deleteButton) {
 		Category category = (Category) deleteButton.getTag();
 		AlertDialog dialog = new AlertDialog.Builder(this).create();
-		dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
-				new CategoryDeleteConfirmClickListener(this, category));
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes), new CategoryDeleteConfirmClickListener(this,
+				category));
 		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.no), new DeleteCancelClickListener());
 		dialog.setTitle(R.string.catalog_edit_deleteCategory_confirmation_title);
 		dialog.setMessage(getString(R.string.catalog_edit_deleteCategory_confirmation_message, category.getName()));
@@ -67,8 +67,7 @@ public class CatalogEditActivity extends Activity {
 	public void confirmDeleteProduct(View deleteButton) {
 		Product product = (Product) deleteButton.getTag();
 		AlertDialog dialog = new AlertDialog.Builder(this).create();
-		dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes),
-				new ProductDeleteConfirmClickListener(this, product));
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.yes), new ProductDeleteConfirmClickListener(this, product));
 		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.no), new DeleteCancelClickListener());
 		dialog.setTitle(R.string.catalog_edit_deleteProduct_confirmation_title);
 		dialog.setMessage(getString(R.string.catalog_edit_deleteProduct_confirmation_message, product.getName()));
@@ -122,8 +121,7 @@ public class CatalogEditActivity extends Activity {
 
 	private void drawProductTree() {
 		ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
-		CatalogEditViewFactory productViewFactory = new CatalogEditViewFactory();
-		categorizedProducts.setAdapter(new CatalogViewAdapter(this, productViewFactory));
+		categorizedProducts.setAdapter(new CatalogViewAdapter(this));
 	}
 
 }

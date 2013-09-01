@@ -114,6 +114,7 @@ public class ShoppingListEditActivity extends Activity {
 		CatalogViewAdapter adapter = getCatalogViewAdapter();
 		adapter.addNonCatalogProduct(product);
 		setModifiedMarker();
+		expandSelectedCollapseDeselected();
 	}
 
 	public void setModifiedMarker() {

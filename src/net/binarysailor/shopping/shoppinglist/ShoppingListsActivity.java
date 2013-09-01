@@ -22,6 +22,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class ShoppingListsActivity extends Activity {
+
+	private List<Map<String, ?>> shoppingListsAdapterData;
+	private SimpleAdapter shoppingListsAdapter;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,36 +45,32 @@ public class ShoppingListsActivity extends Activity {
 		ContextMenuInfo menuInfo = item.getMenuInfo();
 		View targetView = ((AdapterContextMenuInfo) menuInfo).targetView;
 		ShoppingList shoppingList = (ShoppingList) targetView.getTag();
-		SavedShoppingListCommand cmd = null;
+		SavedShoppingListCommand returnCommand = null;
 		switch (item.getItemId()) {
 		case R.id.load_list:
 		case R.id.merge_list:
-			cmd = new SavedShoppingListLoadCommand((ShoppingList) shoppingList.clone(), item.getItemId() == R.id.load_list);
+			returnCommand = new SavedShoppingListLoadCommand((ShoppingList) shoppingList.clone(), item.getItemId() == R.id.load_list);
 			break;
 		case R.id.delete_list:
 			new ShoppingListDAO(this).deleteShoppingList(shoppingList.getId());
-			cmd = new SavedShoppingListDeleteCommand(shoppingList.getId());
+			refreshList();
 			break;
 		}
-		Intent intent = new Intent();
-		intent.putExtra("command", cmd);
-		setResult(RESULT_OK, intent);
-		finish();
+		if (returnCommand != null) {
+			Intent intent = new Intent();
+			intent.putExtra("command", returnCommand);
+			setResult(RESULT_OK, intent);
+			finish();
+		}
 		return true;
 	}
 
 	private void drawShoppingLists() {
-		List<ShoppingList> shoppingLists = new ShoppingListDAO(this).getShoppingLists();
-		List<Map<String, ?>> data = new LinkedList<Map<String, ?>>();
-		for (ShoppingList list : shoppingLists) {
-			Map<String, ShoppingList> m = new HashMap<String, ShoppingList>();
-			m.put("listObject", list);
-			data.add(m);
-		}
-		SimpleAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_1, new String[] { "listObject" },
+		shoppingListsAdapterData = new LinkedList<Map<String, ?>>();
+		shoppingListsAdapter = new SimpleAdapter(this, shoppingListsAdapterData, android.R.layout.simple_list_item_1, new String[] { "listObject" },
 				new int[] { android.R.id.text1 });
 		ListView lv = (ListView) findViewById(R.id.shopping_list_list);
-		adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+		shoppingListsAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Object data, String textRepresentation) {
 				ShoppingList list = (ShoppingList) data;
@@ -79,7 +79,20 @@ public class ShoppingListsActivity extends Activity {
 				return true;
 			}
 		});
-		lv.setAdapter(adapter);
+		lv.setAdapter(shoppingListsAdapter);
 		registerForContextMenu(lv);
+		refreshList();
 	}
+
+	private void refreshList() {
+		shoppingListsAdapterData.clear();
+		List<ShoppingList> shoppingLists = new ShoppingListDAO(this).getShoppingLists();
+		for (ShoppingList list : shoppingLists) {
+			Map<String, ShoppingList> m = new HashMap<String, ShoppingList>();
+			m.put("listObject", list);
+			shoppingListsAdapterData.add(m);
+		}
+		shoppingListsAdapter.notifyDataSetChanged();
+	}
+
 }

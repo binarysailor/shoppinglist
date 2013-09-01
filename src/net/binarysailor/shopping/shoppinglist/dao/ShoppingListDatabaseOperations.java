@@ -38,7 +38,7 @@ class ShoppingListDatabaseOperations {
 
 		@Override
 		public Object execute(SQLiteDatabase db) {
-			new DeleteProducts(list.getId()).execute(db);
+			new DeleteEnlistedProducts(list.getId()).execute(db);
 			new InsertProducts(list.getId(), list.getProducts()).execute(db);
 			return null;
 		}
@@ -56,17 +56,17 @@ class ShoppingListDatabaseOperations {
 		@Override
 		public Object execute(SQLiteDatabase db) {
 			String[] idArray = new String[] { String.valueOf(id) };
-			new DeleteProducts(id).execute(db);
+			new DeleteEnlistedProducts(id).execute(db);
 			db.delete(ShoppingListContract.ShoppingList.TABLE_NAME, ShoppingListContract.ShoppingList.ID + " = ?", idArray);
 			return null;
 		}
 	}
 
-	private static class DeleteProducts implements DatabaseOperations {
+	private static class DeleteEnlistedProducts implements DatabaseOperations {
 
 		int listId;
 
-		DeleteProducts(int listId) {
+		DeleteEnlistedProducts(int listId) {
 			this.listId = listId;
 		}
 

@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DatabaseUtils {
 
-	static final int DB_VERSION = 2;
+	static final int DB_VERSION = 3;
 	static List<ModuleSQLiteHelper> moduleHelpers = new LinkedList<ModuleSQLiteHelper>();
 
 	public static void registerModuleDBHelper(ModuleSQLiteHelper helper) {

@@ -20,12 +20,6 @@ public class ShoppingListSQLiteHelper implements ModuleSQLiteHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
-		if (newVer >= 2) {
-			db.execSQL("ALTER TABLE enlisted_product ADD COLUMN non_catalog_name TEXT");
-		}
-		if (newVer >= 3) {
-			db.execSQL("ALTER TABLE enlisted_product DROP COLUMN non_catalog_name");
-		}
 	}
 
 }

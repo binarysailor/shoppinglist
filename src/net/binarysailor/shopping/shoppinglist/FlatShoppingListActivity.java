@@ -1,12 +1,9 @@
 package net.binarysailor.shopping.shoppinglist;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import net.binarysailor.shopping.R;
-import net.binarysailor.shopping.catalog.dao.CatalogDAO;
-import net.binarysailor.shopping.catalog.model.Category;
 import net.binarysailor.shopping.shoppinglist.model.ProductSelection;
 import net.binarysailor.shopping.shoppinglist.model.ProductSelectionFactory;
 import android.app.Activity;
@@ -28,14 +25,12 @@ public class FlatShoppingListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_flat_shopping);
 		productSelection = ProductSelectionFactory.getProductSelection(getIntent());
-
-		List<Category> categories = new CatalogDAO(this).getCategories();
-		drawItems(categories);
+		drawItems();
 	}
 
-	private void drawItems(List<Category> categories) {
+	private void drawItems() {
 		ListView list = (ListView) findViewById(R.id.flatShoppingList);
-		ListAdapter productAdapter = new FlatListAdapter(this, categories, productSelection);
+		ListAdapter productAdapter = new FlatListAdapter(this, productSelection);
 		list.setAdapter(productAdapter);
 	}
 

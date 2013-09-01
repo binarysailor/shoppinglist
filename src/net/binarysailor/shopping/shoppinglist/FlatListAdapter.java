@@ -1,11 +1,9 @@
 package net.binarysailor.shopping.shoppinglist;
 
 import java.util.Arrays;
-import java.util.List;
 
 import net.binarysailor.shopping.R;
 import net.binarysailor.shopping.catalog.dao.CatalogDAO;
-import net.binarysailor.shopping.catalog.model.Category;
 import net.binarysailor.shopping.catalog.model.Product;
 import net.binarysailor.shopping.shoppinglist.model.ProductSelection;
 import android.content.Context;
@@ -19,7 +17,7 @@ class FlatListAdapter extends ArrayAdapter<Product> {
 
 	Product[] products;
 
-	public FlatListAdapter(Context context, List<Category> categories, ProductSelection selection) {
+	public FlatListAdapter(Context context, ProductSelection selection) {
 		super(context, 0);
 		products = new CatalogDAO(context).getProducts(selection).toArray(new Product[0]);
 		Arrays.sort(products, ByCategoryComparator.getInstance());

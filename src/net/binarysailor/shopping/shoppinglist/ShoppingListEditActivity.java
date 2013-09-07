@@ -102,7 +102,8 @@ public class ShoppingListEditActivity extends Activity {
 
 			}
 		};
-		SingleTextFieldDialogOptions options = new SingleTextFieldDialogOptions("Nazwa produktu", "Wprowadz nazwe produktu", callback);
+		SingleTextFieldDialogOptions options = new SingleTextFieldDialogOptions(getString(R.string.add_non_catalog_product_title),
+				getString(R.string.add_non_catalog_product_prompt), callback);
 		new SingleTextFieldDialog(this, options).open();
 	}
 
@@ -158,7 +159,8 @@ public class ShoppingListEditActivity extends Activity {
 				saveListAs(text);
 			}
 		};
-		SingleTextFieldDialogOptions options = new SingleTextFieldDialogOptions("Lista", "Wprowadz nazwe listy", callback);
+		SingleTextFieldDialogOptions options = new SingleTextFieldDialogOptions(getString(R.string.save_list_as_title),
+				getString(R.string.save_list_as_prompt), callback);
 		new SingleTextFieldDialog(this, options).open();
 	}
 

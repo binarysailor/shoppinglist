@@ -6,7 +6,7 @@ public class SingleTextFieldDialogOptions {
 	private String dialogTitle;
 	private SingleTextFieldDialogCallback callback;
 
-	public SingleTextFieldDialogOptions(String textFieldHint, String dialogTitle, SingleTextFieldDialogCallback callback) {
+	public SingleTextFieldDialogOptions(String dialogTitle, String textFieldHint, SingleTextFieldDialogCallback callback) {
 		this.textFieldHint = textFieldHint;
 		this.dialogTitle = dialogTitle;
 		this.callback = callback;

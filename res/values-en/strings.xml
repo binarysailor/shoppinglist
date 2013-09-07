@@ -23,6 +23,7 @@
 	<string name="catalog.edit.deleteProduct.confirmation.toast">The product "%s" has been deleted</string>	
 	<string name="category_edit_category_name">Name</string>
 	<string name="category_edit_category_name_hint">Enter category name</string>
+	<string name="product_edit_category_name">Category name</string>
 	<string name="product_edit_product_name">Name</string>
 	<string name="product_edit_product_name_hint">Enter product name</string>	
 	<string name="product_search_hint">Search products</string>
@@ -36,4 +37,8 @@
 	<string name="saved_shopping_list_merge">Add to current list</string>
 	<string name="saved_shopping_list_load">Replace current list</string>	
 	<string name="saved_shopping_list_delete">Delete</string>
+	<string name="save_list_as_title">Save list as</string>
+	<string name="save_list_as_prompt">Enter list name</string>	
+	<string name="add_non_catalog_product_title">Non catalog product</string>
+	<string name="add_non_catalog_product_prompt">Enter product name</string>
 </resources>

@@ -9,14 +9,14 @@
         android:id="@+id/category_name_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nazwa kategorii" />
+        android:text="@string/product_edit_category_name" />
 
     <TextView
         android:id="@+id/category_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:text="Nazwa kategorii"
+        android:text="@string/product_edit_category_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView

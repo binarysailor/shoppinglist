@@ -23,6 +23,7 @@
 	<string name="catalog.edit.deleteProduct.confirmation.toast">Produkt %s został usunięty</string>	
 	<string name="category_edit_category_name">Nazwa</string>
 	<string name="category_edit_category_name_hint">Wprowadź nazwę kategorii</string>
+	<string name="product_edit_category_name">Nazwa kategorii</string>
 	<string name="product_edit_product_name">Nazwa produktu</string>
 	<string name="product_edit_product_name_hint">Wprowadź nazwę produktu</string>
 	<string name="product_search_hint">Szukaj produktu</string>
@@ -36,4 +37,8 @@
 	<string name="saved_shopping_list_merge">Dodaj do aktualnej listy</string>
 	<string name="saved_shopping_list_load">Zastąp aktualną listę</string>
 	<string name="saved_shopping_list_delete">Usuń</string>
+	<string name="save_list_as_title">Zapisz listę jako</string>
+	<string name="save_list_as_prompt">Wprowadź nazwę listy</string>
+	<string name="add_non_catalog_product_title">Produkt spoza katalogu</string>
+	<string name="add_non_catalog_product_prompt">Wprowadź nazwę produktu</string>
 </resources>

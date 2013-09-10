@@ -16,6 +16,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -57,29 +58,35 @@ public class ShoppingListsActivity extends Activity {
 			break;
 		}
 		if (returnCommand != null) {
-			Intent intent = new Intent();
-			intent.putExtra("command", returnCommand);
-			setResult(RESULT_OK, intent);
-			finish();
+			closeAndPassCommand(returnCommand);
 		}
 		return true;
 	}
 
 	private void drawShoppingLists() {
 		shoppingListsAdapterData = new LinkedList<Map<String, ?>>();
-		shoppingListsAdapter = new SimpleAdapter(this, shoppingListsAdapterData, android.R.layout.simple_list_item_1, new String[] { "listObject" },
-				new int[] { android.R.id.text1 });
+		shoppingListsAdapter = new SimpleAdapter(this, shoppingListsAdapterData, android.R.layout.simple_list_item_1,
+				new String[] { "listObject" }, new int[] { android.R.id.text1 });
 		ListView lv = (ListView) findViewById(R.id.shopping_list_list);
 		shoppingListsAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Object data, String textRepresentation) {
-				ShoppingList list = (ShoppingList) data;
+				final ShoppingList list = (ShoppingList) data;
 				((TextView) view).setText(list.getName() != null ? list.getName() : "?");
 				view.setTag(list);
 				return true;
 			}
 		});
 		lv.setAdapter(shoppingListsAdapter);
+		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> av, View view, int arg2, long arg3) {
+				final ShoppingList list = (ShoppingList) view.getTag();
+				if (list != null) {
+					closeAndPassCommand(new SavedShoppingListLoadCommand((ShoppingList) list.clone(), true));
+				}
+			}
+		});
 		registerForContextMenu(lv);
 		refreshList();
 	}
@@ -93,6 +100,13 @@ public class ShoppingListsActivity extends Activity {
 			shoppingListsAdapterData.add(m);
 		}
 		shoppingListsAdapter.notifyDataSetChanged();
+	}
+
+	private void closeAndPassCommand(SavedShoppingListCommand returnCommand) {
+		Intent intent = new Intent();
+		intent.putExtra("command", returnCommand);
+		setResult(RESULT_OK, intent);
+		finish();
 	}
 
 }

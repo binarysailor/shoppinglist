@@ -304,6 +304,7 @@ public class ShoppingListEditActivity extends Activity {
 			setTitle(shoppingList.getName());
 			productSelection.deselectAll();
 			catalogViewAdapter.clearNonCatalogProducts();
+			sendBroadcast(new Intent("shopping_list_load"));
 		} else {
 			setModifiedMarker();
 		}
@@ -325,6 +326,7 @@ public class ShoppingListEditActivity extends Activity {
 		getCatalogViewAdapter().notifyDataSetChanged();
 		setTitle(getString(R.string.title_activity_shopping));
 		expandSelectedCollapseDeselected();
+		sendBroadcast(new Intent("shopping_list_new"));
 	}
 
 	private ExpandableListView getCatalogView() {

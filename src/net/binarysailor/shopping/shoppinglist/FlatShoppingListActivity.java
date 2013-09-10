@@ -4,21 +4,28 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.binarysailor.shopping.R;
+import net.binarysailor.shopping.catalog.model.Product;
 import net.binarysailor.shopping.shoppinglist.model.ProductSelection;
 import net.binarysailor.shopping.shoppinglist.model.ProductSelectionFactory;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class FlatShoppingListActivity extends Activity {
 	ProductSelection productSelection;
-	Set<Integer> doneProducts = new HashSet<Integer>();
+	private static Set<Integer> doneProducts = new HashSet<Integer>();
+
+	public static void clearDoneProducts() {
+		doneProducts.clear();
+	}
+
+	public static boolean isProductDone(int productId) {
+		return doneProducts.contains(productId);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +33,11 @@ public class FlatShoppingListActivity extends Activity {
 		setContentView(R.layout.activity_flat_shopping);
 		productSelection = ProductSelectionFactory.getProductSelection(getIntent());
 		drawItems();
+
 	}
 
 	private void drawItems() {
-		ListView list = (ListView) findViewById(R.id.flatShoppingList);
+		ListView list = findListView();
 		ListAdapter productAdapter = new FlatListAdapter(this, productSelection);
 		list.setAdapter(productAdapter);
 	}
@@ -47,16 +55,18 @@ public class FlatShoppingListActivity extends Activity {
 		startActivity(intent);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void productNameClicked(View v) {
-		TextView tv = (TextView) v;
 		if (doneProducts.contains(v.getId())) {
-			tv.setTextColor(Color.BLACK);
-			tv.setPaintFlags(tv.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 			doneProducts.remove(v.getId());
 		} else {
-			tv.setTextColor(Color.LTGRAY);
-			tv.setPaintFlags(tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 			doneProducts.add(v.getId());
 		}
+		((ArrayAdapter<Product>) findListView().getAdapter()).notifyDataSetChanged();
+
+	}
+
+	private ListView findListView() {
+		return (ListView) findViewById(R.id.flatShoppingList);
 	}
 }

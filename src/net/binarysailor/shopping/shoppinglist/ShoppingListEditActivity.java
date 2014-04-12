@@ -1,10 +1,7 @@
 package net.binarysailor.shopping.shoppinglist;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import net.binarysailor.shopping.R;
 import net.binarysailor.shopping.catalog.dao.CatalogDAO;
@@ -15,8 +12,6 @@ import net.binarysailor.shopping.common.ui.SingleTextFieldDialogCallback;
 import net.binarysailor.shopping.common.ui.SingleTextFieldDialogOptions;
 import net.binarysailor.shopping.shoppinglist.dao.ShoppingListDAO;
 import net.binarysailor.shopping.shoppinglist.model.EnlistedProduct;
-import net.binarysailor.shopping.shoppinglist.model.ProductSelection;
-import net.binarysailor.shopping.shoppinglist.model.ProductSelectionFactory;
 import net.binarysailor.shopping.shoppinglist.model.ShoppingList;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,16 +29,15 @@ import android.widget.ExpandableListView;
 
 public class ShoppingListEditActivity extends Activity {
 
-	ProductSelection productSelection;
-	ShoppingList loadedList;
-	Set<Integer> expandedGroups = new HashSet<Integer>();
-	TreeGroupExpandListener expandListener = new TreeGroupExpandListener(expandedGroups);
+	private static final int REQUEST_CODE_LOAD_LIST = 0;
+
+	private CurrentShoppingList currentList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_shopping);
-		productSelection = ProductSelectionFactory.getProductSelection(getIntent());
+		currentList = CurrentShoppingList.getInstance();
 
 		List<Category> categories = new CatalogDAO(this).getCategories();
 		setupCatalogView(categories);
@@ -51,7 +45,6 @@ public class ShoppingListEditActivity extends Activity {
 		EditText searchField = (EditText) findViewById(R.id.searchText);
 		searchField.addTextChangedListener(new SearchTextWatcher(this));
 		searchField.clearFocus();
-
 	}
 
 	@Override
@@ -63,7 +56,7 @@ public class ShoppingListEditActivity extends Activity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.save_current_list).setEnabled(loadedList != null);
+		menu.findItem(R.id.save_current_list).setEnabled(currentList.isListLoaded());
 		return true;
 	}
 
@@ -72,13 +65,12 @@ public class ShoppingListEditActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.load_list: {
 			Intent intent = new Intent(this, ShoppingListsActivity.class);
-			startActivityForResult(intent, 0);
+			startActivityForResult(intent, REQUEST_CODE_LOAD_LIST);
 			break;
 		}
 		case R.id.save_current_list:
-			if (loadedList != null) {
-				new ShoppingListDAO(this).updateShoppingListContents(loadedList.getId(), productSelection);
-				resetModifiedMarker();
+			if (currentList.isListLoaded()) {
+				saveCurrentList();
 				break;
 			}
 		case R.id.save_current_list_as:
@@ -92,6 +84,11 @@ public class ShoppingListEditActivity extends Activity {
 			break;
 		}
 		return true;
+	}
+
+	private void saveCurrentList() {
+		new ShoppingListDAO(this).updateShoppingListContents(currentList.getLoadedListId(), currentList.getProductSelection());
+		resetModifiedMarker();
 	}
 
 	private void openNonCatalogProductDialog() {
@@ -111,7 +108,7 @@ public class ShoppingListEditActivity extends Activity {
 		Product product = new Product();
 		product.setName(name);
 		new CatalogDAO(this).createProduct(product);
-		productSelection.select(product.getId());
+		currentList.selectProduct(product.getId());
 		CatalogViewAdapter adapter = getCatalogViewAdapter();
 		adapter.addNonCatalogProduct(product);
 		setModifiedMarker();
@@ -119,24 +116,38 @@ public class ShoppingListEditActivity extends Activity {
 	}
 
 	public void setModifiedMarker() {
-		if (!getTitle().toString().endsWith(" *")) {
-			setTitle(getTitle() + " *");
-		}
+		currentList.setListModified(true);
+		updateTitle();
 	}
 
 	public void resetModifiedMarker() {
-		if (getTitle().toString().endsWith(" *")) {
-			setTitle(getTitle().toString().substring(0, getTitle().length() - 2));
+		currentList.setListModified(false);
+		updateTitle();
+	}
+
+	private void updateTitle() {
+		if (currentList.isListModified()) {
+			if (!getTitle().toString().endsWith(" *")) {
+				setTitle(getTitle() + " *");
+			}
+		} else {
+			if (getTitle().toString().endsWith(" *")) {
+				setTitle(getTitle().toString().substring(0, getTitle().length() - 2));
+			}
 		}
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode != RESULT_CANCELED) {
-			SavedShoppingListCommand command = (SavedShoppingListCommand) data.getSerializableExtra("command");
-			command.execute(this);
-			expandSelectedCollapseDeselected();
+		switch (requestCode) {
+		case REQUEST_CODE_LOAD_LIST:
+			if (resultCode != RESULT_CANCELED) {
+				SavedShoppingListCommand command = (SavedShoppingListCommand) data.getSerializableExtra("command");
+				command.execute(this);
+				expandSelectedCollapseDeselected();
+			}
+			break;
 		}
 	}
 
@@ -144,7 +155,7 @@ public class ShoppingListEditActivity extends Activity {
 		ShoppingList list = new ShoppingList();
 		list.setName(name);
 		for (Product product : new CatalogDAO(this).getAllProducts()) {
-			if (productSelection.isSelected(product.getId())) {
+			if (currentList.isProductSelected(product.getId())) {
 				list.enlistProduct(product, BigDecimal.ONE);
 			}
 		}
@@ -174,10 +185,10 @@ public class ShoppingListEditActivity extends Activity {
 			final CheckBox cb = (CheckBox) v;
 			final Product product = (Product) cb.getTag();
 			if (cb.isChecked()) {
-				productSelection.select(product.getId());
+				currentList.selectProduct(product.getId());
 			} else {
 				if (product.isInCatalog()) {
-					productSelection.deselect(product.getId());
+					currentList.deselectProduct(product.getId());
 				} else {
 					AlertDialog dialog = new AlertDialog.Builder(this).create();
 					dialog.setTitle("Na pewno?");
@@ -193,7 +204,7 @@ public class ShoppingListEditActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
-							productSelection.deselect(product.getId());
+							currentList.deselectProduct(product.getId());
 							getCatalogViewAdapter().removeNonCatalogProduct(product);
 						}
 					});
@@ -212,16 +223,15 @@ public class ShoppingListEditActivity extends Activity {
 
 	private View setupCatalogView(List<Category> categories) {
 		ExpandableListView categorizedProducts = (ExpandableListView) findViewById(R.id.productTree);
-		CatalogViewAdapter adapter = new CatalogViewAdapter(this, productSelection);
+		CatalogViewAdapter adapter = new CatalogViewAdapter(this, currentList.getProductSelection());
 		categorizedProducts.setAdapter(adapter);
-		categorizedProducts.setOnGroupExpandListener(expandListener);
-		categorizedProducts.setOnGroupCollapseListener(expandListener);
+		categorizedProducts.setOnGroupExpandListener(currentList);
+		categorizedProducts.setOnGroupCollapseListener(currentList);
 		return categorizedProducts;
 	}
 
 	public void showFlatView(View source) {
 		Intent intent = new Intent(this, FlatShoppingListActivity.class);
-		intent.putExtra("selection", this.productSelection);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
@@ -229,21 +239,23 @@ public class ShoppingListEditActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		updateTitle();
+		getCatalogViewAdapter().notifyDataSetChanged();
 		restoreExpandCollapseState();
 	}
 
 	void restoreExpandCollapseState() {
-		expandListener.stopListening();
+		currentList.stopListening();
 		ExpandableListView categorizedProducts = getCatalogView();
 		int size = categorizedProducts.getExpandableListAdapter().getGroupCount();
 		for (int i = 0; i < size; i++) {
-			if (expandedGroups.contains(i)) {
+			if (currentList.isGroupExpanded(i)) {
 				categorizedProducts.expandGroup(i);
 			} else {
 				categorizedProducts.collapseGroup(i);
 			}
 		}
-		expandListener.startListening();
+		currentList.startListening();
 	}
 
 	void expandSelectedCollapseDeselected() {
@@ -254,7 +266,7 @@ public class ShoppingListEditActivity extends Activity {
 			ProductGroup category = (ProductGroup) cva.getGroup(i);
 			boolean anythingSelected = false;
 			for (Product product : category.getProducts()) {
-				if (productSelection.isSelected(product.getId())) {
+				if (currentList.isProductSelected(product.getId())) {
 					categorizedProducts.expandGroup(i);
 					anythingSelected = true;
 					break;
@@ -270,45 +282,34 @@ public class ShoppingListEditActivity extends Activity {
 		ExpandableListView categorizedProducts = getCatalogView();
 		CatalogViewAdapter adapter = getCatalogViewAdapter();
 		int groupCount = adapter.getGroupCount();
-		expandListener.stopListening();
+		currentList.stopListening();
 		for (int i = 0; i < groupCount; i++) {
 			categorizedProducts.expandGroup(i);
 		}
-		expandListener.startListening();
+		currentList.startListening();
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putIntegerArrayList("expandedGroups", new ArrayList<Integer>(expandedGroups));
-		outState.putSerializable("productSelection", productSelection);
+		outState.putSerializable("currentList", currentList);
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		ArrayList<Integer> savedExpandedIndices = savedInstanceState.getIntegerArrayList("expandedGroups");
-		expandedGroups = new HashSet<Integer>(savedExpandedIndices);
-		expandListener.setExpanded(expandedGroups);
-		productSelection = (ProductSelection) savedInstanceState.getSerializable("productSelection");
-	}
-
-	public ProductSelection getProductSelection() {
-		return productSelection;
+		currentList = (CurrentShoppingList) savedInstanceState.getSerializable("currentList");
 	}
 
 	public void loadList(ShoppingList shoppingList, boolean replace) {
 		CatalogViewAdapter catalogViewAdapter = getCatalogViewAdapter();
+		currentList.loadList(shoppingList, replace);
 		if (replace) {
-			this.loadedList = shoppingList;
 			setTitle(shoppingList.getName());
-			productSelection.deselectAll();
 			catalogViewAdapter.clearNonCatalogProducts();
-			sendBroadcast(new Intent("shopping_list_load"));
 		} else {
 			setModifiedMarker();
 		}
-		productSelection.add(shoppingList.toSelection());
 		addNonCatalogProducts(shoppingList);
 		catalogViewAdapter.notifyDataSetChanged();
 	}
@@ -321,12 +322,10 @@ public class ShoppingListEditActivity extends Activity {
 	}
 
 	public void resetList() {
-		this.loadedList = null;
-		productSelection.deselectAll();
+		currentList.reset();
 		getCatalogViewAdapter().notifyDataSetChanged();
 		setTitle(getString(R.string.title_activity_shopping));
 		expandSelectedCollapseDeselected();
-		sendBroadcast(new Intent("shopping_list_new"));
 	}
 
 	private ExpandableListView getCatalogView() {

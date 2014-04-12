@@ -41,4 +41,5 @@
 	<string name="save_list_as_prompt">Enter list name</string>	
 	<string name="add_non_catalog_product_title">Non catalog product</string>
 	<string name="add_non_catalog_product_prompt">Enter product name</string>
+	<string name="finish_shopping">Finish shopping</string>
 </resources>

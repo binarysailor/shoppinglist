@@ -29,28 +29,23 @@
 
         <TextView
             android:id="@+id/textViewGoShopping"
+            style="@style/ActiveLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/title_activity_flat_shopping"
-            style="@style/ActiveLink" />
+            android:text="@string/title_activity_flat_shopping" />
         
-        <!-- 
-        <Button
-            android:id="@+id/treeView"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/shopping.button.treeView"
-            android:onClick="showTreeView"
-            android:drawableLeft="@android:drawable/ic_menu_edit" />
-            -->
     </LinearLayout>
 
-    <ListView 
-        android:id="@+id/flatShoppingList" 
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" >
-        
+    <ListView
+        android:id="@+id/flatShoppingList"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp" android:layout_weight="1" >
     </ListView>
-    
+
+    <Button
+        android:id="@+id/finishShoppingBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="finishShopping"
+        android:text="@string/finish_shopping" />
 </LinearLayout>

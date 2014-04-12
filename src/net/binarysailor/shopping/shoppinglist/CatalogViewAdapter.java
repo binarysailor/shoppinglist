@@ -62,7 +62,7 @@ class CatalogViewAdapter extends BaseExpandableListAdapter {
 	}
 
 	private ProductGroup getProductGroup(int groupPosition) {
-		return productGroups.get(groupPosition);
+		return filteredProductGroups.get(groupPosition).getProductGroup();
 	}
 
 	@Override

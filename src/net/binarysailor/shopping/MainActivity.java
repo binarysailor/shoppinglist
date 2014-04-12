@@ -4,11 +4,9 @@ import net.binarysailor.shopping.catalog.CatalogEditActivity;
 import net.binarysailor.shopping.catalog.dao.CatalogSQLiteHelper;
 import net.binarysailor.shopping.common.DatabaseUtils;
 import net.binarysailor.shopping.shoppinglist.ShoppingListEditActivity;
-import net.binarysailor.shopping.shoppinglist.ShoppingListEventReceiver;
 import net.binarysailor.shopping.shoppinglist.dao.ShoppingListSQLiteHelper;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 
@@ -19,7 +17,6 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		registerModuleSQLiteHelpers();
-		registerBroadcastReceivers();
 	}
 
 	public void goToShopping(View b) {
@@ -37,10 +34,4 @@ public class MainActivity extends Activity {
 		DatabaseUtils.registerModuleDBHelper(new ShoppingListSQLiteHelper());
 	}
 
-	private void registerBroadcastReceivers() {
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("shopping_list_new");
-		intentFilter.addAction("shopping_list_load");
-		this.registerReceiver(new ShoppingListEventReceiver(), intentFilter);
-	}
 }

@@ -41,4 +41,5 @@
 	<string name="save_list_as_prompt">Wprowadź nazwę listy</string>
 	<string name="add_non_catalog_product_title">Produkt spoza katalogu</string>
 	<string name="add_non_catalog_product_prompt">Wprowadź nazwę produktu</string>
+	<string name="finish_shopping">Zakończ zakupy</string>
 </resources>

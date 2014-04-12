@@ -5,7 +5,6 @@ import java.util.Arrays;
 import net.binarysailor.shopping.R;
 import net.binarysailor.shopping.catalog.dao.CatalogDAO;
 import net.binarysailor.shopping.catalog.model.Product;
-import net.binarysailor.shopping.shoppinglist.model.ProductSelection;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -17,11 +16,13 @@ import android.widget.TextView;
 
 class FlatListAdapter extends ArrayAdapter<Product> {
 
-	Product[] products;
+	private Product[] products;
+	private CurrentShoppingList currentList;
 
-	public FlatListAdapter(Context context, ProductSelection selection) {
+	public FlatListAdapter(Context context, CurrentShoppingList currentList) {
 		super(context, 0);
-		products = new CatalogDAO(context).getProducts(selection).toArray(new Product[0]);
+		this.currentList = currentList;
+		products = new CatalogDAO(context).getProducts(currentList.getProductSelection()).toArray(new Product[0]);
 		Arrays.sort(products, ByCategoryComparator.getInstance());
 		for (Product p : products) {
 			add(p);
@@ -36,7 +37,7 @@ class FlatListAdapter extends ArrayAdapter<Product> {
 		Product product = products[position];
 		tv.setId(product.getId());
 		tv.setText(product.getName());
-		boolean done = FlatShoppingListActivity.isProductDone(product.getId());
+		boolean done = currentList.isProductDone(product.getId());
 		int color = done ? Color.LTGRAY : Color.BLACK;
 		int flags = done ? (tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG) : (tv.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 		tv.setTextColor(color);

@@ -23,7 +23,8 @@
         </activity>
         <activity
             android:name="net.binarysailor.shopping.shoppinglist.ShoppingListEditActivity"
-            android:label="@string/title_activity_shopping" >
+            android:label="@string/title_activity_shopping" 
+            android:windowSoftInputMode="stateHidden">
         </activity>    
         <activity
             android:name="net.binarysailor.shopping.shoppinglist.FlatShoppingListActivity"

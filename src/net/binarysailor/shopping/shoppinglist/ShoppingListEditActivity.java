@@ -13,6 +13,7 @@ import net.binarysailor.shopping.common.ui.SingleTextFieldDialogOptions;
 import net.binarysailor.shopping.shoppinglist.dao.ShoppingListDAO;
 import net.binarysailor.shopping.shoppinglist.model.EnlistedProduct;
 import net.binarysailor.shopping.shoppinglist.model.ShoppingList;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -36,6 +38,13 @@ public class ShoppingListEditActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		requestWindowFeature(Window.FEATURE_ACTION_BAR);
+		ActionBar actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.addTab(actionBar.newTab().setText("Tab 1").setTabListener(new ShoppingTabListener()).setText("Prepare"));
+		actionBar.addTab(actionBar.newTab().setText("Tab 2").setTabListener(new ShoppingTabListener()).setText("Go shopping"));
+
 		setContentView(R.layout.activity_shopping);
 		currentList = CurrentShoppingList.getInstance();
 
@@ -45,6 +54,7 @@ public class ShoppingListEditActivity extends Activity {
 		EditText searchField = (EditText) findViewById(R.id.searchText);
 		searchField.addTextChangedListener(new SearchTextWatcher(this));
 		searchField.clearFocus();
+
 	}
 
 	@Override

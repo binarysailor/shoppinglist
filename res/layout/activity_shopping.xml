@@ -11,6 +11,7 @@
         android:orientation="horizontal"
         android:padding="10dp">
         
+        <!-- 
         <TextView
             style="@style/ActiveLink"
             android:id="@+id/textViewEdit"
@@ -24,6 +25,11 @@
             android:contentDescription="" 
             android:layout_width="wrap_content" 
             android:layout_height="fill_parent" />
+         -->
+        <ImageView android:scaleType="fitXY" android:layout_height="50dp" android:layout_width="50dp" android:src="@drawable/load" />
+        <ImageView android:scaleType="fitXY" android:layout_height="50dp" android:layout_width="50dp" android:src="@drawable/loadmerge" />
+        <ImageView android:scaleType="fitXY" android:layout_height="50dp" android:layout_width="50dp" android:src="@drawable/save" />
+        <ImageView android:scaleType="fitXY" android:layout_height="50dp" android:layout_width="50dp" android:src="@drawable/settings" android:layout_marginLeft="10dp" /> 
 
         <TextView
             android:id="@+id/textViewGoShopping"

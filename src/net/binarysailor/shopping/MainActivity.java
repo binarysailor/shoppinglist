@@ -3,7 +3,7 @@ package net.binarysailor.shopping;
 import net.binarysailor.shopping.catalog.CatalogEditActivity;
 import net.binarysailor.shopping.catalog.dao.CatalogSQLiteHelper;
 import net.binarysailor.shopping.common.DatabaseUtils;
-import net.binarysailor.shopping.shoppinglist.ShoppingListEditActivity;
+import net.binarysailor.shopping.shoppinglist.ShoppingListTabbedActivity;
 import net.binarysailor.shopping.shoppinglist.dao.ShoppingListSQLiteHelper;
 import android.app.Activity;
 import android.content.Intent;
@@ -20,7 +20,8 @@ public class MainActivity extends Activity {
 	}
 
 	public void goToShopping(View b) {
-		Intent i = new Intent(this, ShoppingListEditActivity.class);
+		//Intent i = new Intent(this, ShoppingListEditActivity.class);
+		Intent i = new Intent(this, ShoppingListTabbedActivity.class);
 		startActivity(i);
 	}
 
